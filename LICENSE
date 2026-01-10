@@ -1,0 +1,58 @@
+AKSHON RESEARCH LICENSE (ARL-1.0)
+Version: 1.0 Date: January 10, 2026 Copyright © 2026 Yani Meziani
+
+PREAMBLE
+The Akshon framework is a Sovereign Multimodal Intelligence grounded in Hamiltonian mechanics. This license is designed to foster non-commercial scientific reproducibility while protecting the sovereign economic interests of the Resonance Protocol. It distinguishes between the Theoretical Framework (governed by CC BY 4.0) and the Reference Implementation (governed by this license).
+
+1. GRANT OF RIGHTS
+Subject to the terms and conditions of this License, the Licensor grants you a worldwide, royalty-free, non-exclusive license to:
+
+
+Access and Study: Access the Source Code for the purpose of understanding the Hamiltonian State Space Duality and Symplectic Integration methods.
+
+
+
+Modify and Experiment: Modify the Source Code and execute it within "Sovereign Sandboxed Environments" (SSE) strictly for non-commercial scientific research, academic validation, or personal experimentation.
+
+
+
+Publish Results: Publish research papers or findings derived from the Software, provided that such publications cite the original Unified Research Monograph and do not expose the sovereign cryptographic keys.
+
+
+2. RESTRICTIONS
+Commercial Use Prohibition: You may not use the Software, or any modified version of it, for any Commercial Purpose. "Commercial Purpose" includes, but is not limited to:
+
+Selling access to the model or its outputs.
+
+Integrating the model into a product for hire.
+
+Using the model to generate assets for a for-profit entity.
+
+
+Commercial usage requires a separate license from the entities holding the sovereign cryptographic keys.
+
+
+Immutable Core: You may not strip, modify, or obscure the Execution Audit Trail or Watchdog Protocol logic from any deployed instance that interacts with the public decentralized network.
+
+
+
+Cryptographic Integrity: You may not bypass the Merkle-hashing verification of the frozen weights when connecting to the peer-to-peer cluster.
+
+
+3. THE "DEAD MAN SWITCH" (SAFETY CLAUSE)
+Automatic Public Domain Release: In the event of the primary author's (Yani Meziani) verified "Life Termination Event" (cessation of biological function), this specific license (ARL-1.0) shall immediately terminate, and the entire Software, including all Source Code, Weights, and Documentation, shall be automatically re-licensed under The Unlicense (Public Domain).
+
+
+Purpose: To ensure that this knowledge is preserved for humanity and never lost due to the absence of its creator.
+
+
+Mechanism: Access restrictions will be lifted automatically via the dead_man_switch protocol.
+
+4. ATTRIBUTION
+Any public use, modification, or distribution of the Software or the Theoretical Framework must retain the original copyright notice and provide a citation to the "Unified Research Monograph: Studies 1-4" (January 10, 2026).
+
+
+5. DISCLAIMER OF WARRANTY
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+End of License
