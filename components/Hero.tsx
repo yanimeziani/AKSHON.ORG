@@ -28,7 +28,7 @@ export default function Hero() {
                     transition={{ duration: 0.8 }}
                 >
                     <span className="inline-block px-4 py-1.5 mb-6 text-xs font-semibold tracking-widest text-primary uppercase border border-primary/30 rounded-full glass glow-gold">
-                        The Sovereign Arbitrageur
+                        Videre Mundum in Grano Arenae
                     </span>
                     <h1 className="mb-8 text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white">
                         AK<span className="text-primary">SHON</span>
