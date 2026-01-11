@@ -3,7 +3,7 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import { motion } from "framer-motion";
-import { Brain, Database, Cpu, ArrowRight, Zap, Shield, Crown } from "lucide-react";
+import { Brain, Database, Cpu, ArrowRight, Zap, Shield, Crown, Activity } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -143,6 +143,43 @@ export default function Home() {
                 ))}
               </div>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Agentic Research Section */}
+      <section className="py-32 relative overflow-hidden text-center">
+        <div className="container mx-auto px-4">
+          <header className="mb-20">
+            <h2 className="text-4xl md:text-6xl font-black text-white italic uppercase tracking-tighter">
+              Built for <span className="text-primary italic">Agents</span>
+            </h2>
+            <p className="text-muted-foreground font-light max-w-2xl mx-auto italic mt-4">
+              Our platform provides the high-fidelity data feeds and synthesis outputs required for autonomous research agents to execute with precision.
+            </p>
+          </header>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { title: "Structured Feeds", icon: Activity, desc: "Clean JSON research deltas processed from raw PDF streams." },
+              { title: "API First", icon: Cpu, desc: "REST & GraphQL conduits for seamless agent integration." },
+              { title: "Verifiable IDs", icon: Shield, desc: "Cryptographic proofs for every insight synthesized." },
+              { title: "Global Scale", icon: Zap, desc: "Ingesting 100k+ research papers per minute via Fleet." }
+            ].map((feature, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.1 }}
+                className="glass p-8 rounded-3xl border-white/5 hover:bg-white/[0.02] transition-colors"
+              >
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6 mx-auto">
+                  <feature.icon className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold text-white uppercase italic mb-2">{feature.title}</h3>
+                <p className="text-[10px] text-muted-foreground uppercase font-medium leading-relaxed italic">{feature.desc}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>

@@ -3,11 +3,22 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LeadCapture from "./LeadCapture";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, User } from "firebase/auth";
+import TelemetryToggle from "./TelemetryToggle";
 
 export default function Navbar() {
     const [isCaptureOpen, setIsCaptureOpen] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
+        });
+        return () => unsubscribe();
+    }, []);
 
     return (
         <motion.nav
@@ -46,9 +57,11 @@ export default function Navbar() {
                     >
                         Community
                     </a>
-                    <Button variant="ghost" className="hidden sm:inline-flex text-muted-foreground font-bold hover:text-white uppercase tracking-widest text-xs">
-                        Log In
-                    </Button>
+                    <Link href={user ? "/corpus" : "/login"}>
+                        <Button variant="ghost" className="hidden sm:inline-flex text-muted-foreground font-bold hover:text-white uppercase tracking-widest text-xs">
+                            {user ? "Dashboard" : "Log In"}
+                        </Button>
+                    </Link>
                     <Button
                         onClick={() => setIsCaptureOpen(true)}
                         size="sm"
