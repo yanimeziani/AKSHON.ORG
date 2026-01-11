@@ -33,14 +33,14 @@ export default function Navbar() {
         <motion.nav
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className="fixed top-0 left-0 right-0 z-50 h-20 border-b border-white/5 glass"
+            className="fixed top-0 left-0 right-0 z-50 h-20 border-b border-white/40 glass-chroma"
         >
             <div className="container h-full mx-auto px-4 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded bg-primary flex items-center justify-center font-black text-black text-xl">
+                    <div className="w-8 h-8 rounded bg-primary flex items-center justify-center font-black text-primary-foreground text-xl shadow-lg">
                         A
                     </div>
-                    <span className="text-xl font-black tracking-tighter text-white uppercase italic">
+                    <span className="text-xl font-black tracking-tighter text-foreground uppercase italic">
                         Akshon<span className="text-primary tracking-normal">.org</span>
                     </span>
                 </Link>
@@ -63,28 +63,28 @@ export default function Navbar() {
                         href="https://discord.gg/QVsmmNK2"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hidden sm:flex items-center gap-2 text-muted-foreground font-bold hover:text-white transition-colors uppercase tracking-widest text-xs"
+                        className="hidden sm:flex items-center gap-2 text-muted-foreground font-bold hover:text-foreground transition-colors uppercase tracking-widest text-xs"
                     >
                         Community
                     </a>
                     {user ? (
                         <div className="flex items-center gap-2">
                             <Link href="/dashboard">
-                                <Button variant="ghost" className="hidden sm:inline-flex text-muted-foreground font-bold hover:text-white uppercase tracking-widest text-xs">
+                                <Button variant="ghost" className="hidden sm:inline-flex text-muted-foreground font-bold hover:text-foreground uppercase tracking-widest text-xs">
                                     Dashboard
                                 </Button>
                             </Link>
                             <Button
                                 onClick={handleSignOut}
                                 variant="ghost"
-                                className="hidden sm:inline-flex text-white/40 font-bold hover:text-red-400 uppercase tracking-widest text-[9px]"
+                                className="hidden sm:inline-flex text-muted-foreground/60 font-bold hover:text-destructive uppercase tracking-widest text-[9px]"
                             >
                                 Sign Out
                             </Button>
                         </div>
                     ) : (
                         <Link href="/login">
-                            <Button variant="ghost" className="hidden sm:inline-flex text-muted-foreground font-bold hover:text-white uppercase tracking-widest text-xs">
+                            <Button variant="ghost" className="hidden sm:inline-flex text-muted-foreground font-bold hover:text-foreground uppercase tracking-widest text-xs">
                                 Log In
                             </Button>
                         </Link>
@@ -92,7 +92,7 @@ export default function Navbar() {
                     <Button
                         onClick={() => setIsCaptureOpen(true)}
                         size="sm"
-                        className="rounded-full bg-primary hover:bg-primary/90 text-black font-black uppercase tracking-widest text-xs px-6"
+                        className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-widest text-xs px-6 shadow-md"
                     >
                         Get Edge
                     </Button>

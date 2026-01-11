@@ -21,11 +21,11 @@ export default async function CorpusPage() {
     }
 
     return (
-        <main className="min-h-screen bg-black pt-32 pb-24">
+        <main className="min-h-screen bg-background pt-32 pb-24 text-foreground">
             <Navbar />
             <div className="container mx-auto px-4">
                 <header className="mb-12">
-                    <h1 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter mb-4">
+                    <h1 className="text-4xl md:text-5xl font-black text-foreground italic uppercase tracking-tighter mb-4">
                         The Research <span className="text-primary italic">Vault</span>
                     </h1>
                     <p className="text-muted-foreground font-light max-w-2xl">
@@ -36,20 +36,20 @@ export default async function CorpusPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
                     {papers.length === 0 ? (
-                        <div className="col-span-full py-12 text-center border border-white/5 rounded-3xl bg-white/[0.02]">
+                        <div className="col-span-full py-12 text-center border border-border rounded-3xl bg-white/[0.02]">
                             <p className="text-muted-foreground italic">
                                 No research papers currently available in the vault. Reference GCP bucket 'research/'.
                             </p>
                         </div>
                     ) : (
                         papers.map((paper: any, i: number) => (
-                            <Card key={i} className="glass border-white/5 hover:border-primary/30 transition-all group">
+                            <Card key={i} className="glass-chroma border-border hover:border-primary/30 transition-all group shadow-sm hover:shadow-md">
                                 <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-                                    <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center text-primary group-hover:bg-primary/20 transition-colors">
+                                    <div className="w-12 h-12 rounded-lg bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary/20 transition-colors">
                                         <FileText className="w-6 h-6" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <CardTitle className="text-lg text-white font-bold leading-tight truncate">
+                                        <CardTitle className="text-lg text-foreground font-bold leading-tight truncate">
                                             {paper.name.replace(".pdf", "").replace(/_/g, " ")}
                                         </CardTitle>
                                         <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono mt-1">
@@ -59,7 +59,7 @@ export default async function CorpusPage() {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="flex gap-2">
-                                        <Button asChild variant="outline" size="sm" className="flex-1 rounded-full text-xs font-bold uppercase tracking-widest h-9 border-white/10 text-white hover:bg-white/10">
+                                        <Button asChild variant="outline" size="sm" className="flex-1 rounded-full text-xs font-bold uppercase tracking-widest h-9 border-input text-foreground hover:bg-secondary">
                                             <TrackedLink href={paper.url} target="_blank" rel="noopener noreferrer" eventName={`download_${paper.name}`} metadata={{ paperName: paper.name }}>
                                                 <Download className="w-3 h-3 mr-2" />
                                                 Download
@@ -79,26 +79,26 @@ export default async function CorpusPage() {
 
                 {/* Honeypot Section */}
                 {restrictedAreas.length > 0 && (
-                    <section className="mt-24 pt-12 border-t border-white/5">
+                    <section className="mt-24 pt-12 border-t border-border">
                         <div className="flex items-center gap-3 mb-8">
-                            <ShieldAlert className="w-6 h-6 text-red-500" />
-                            <h2 className="text-2xl font-black text-white uppercase tracking-tighter italic">
-                                Restricted <span className="text-red-500">Assets</span>
+                            <ShieldAlert className="w-6 h-6 text-destructive" />
+                            <h2 className="text-2xl font-black text-foreground uppercase tracking-tighter italic">
+                                Restricted <span className="text-destructive">Assets</span>
                             </h2>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-60 hover:opacity-100 transition-opacity">
                             {restrictedAreas.map((area, i) => (
-                                <Card key={i} className="bg-red-950/20 border-red-900/30 hover:bg-red-950/30 transition-all cursor-not-allowed">
+                                <Card key={i} className="bg-destructive/5 border-destructive/20 hover:bg-destructive/10 transition-all cursor-not-allowed">
                                     <CardHeader className="flex flex-row items-center justify-between space-y-0">
                                         <div>
-                                            <CardTitle className="text-sm text-red-200 font-mono">
+                                            <CardTitle className="text-sm text-destructive font-mono">
                                                 {area.name}
                                             </CardTitle>
-                                            <p className="text-[10px] text-red-500/70 font-mono mt-1 uppercase">
+                                            <p className="text-[10px] text-destructive/70 font-mono mt-1 uppercase">
                                                 INTERNAL USE ONLY • ENCRYPTED
                                             </p>
                                         </div>
-                                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-400 hover:bg-red-500/10 h-7 text-[10px] font-bold uppercase tracking-tight">
+                                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10 h-7 text-[10px] font-bold uppercase tracking-tight">
                                             Attempt Decrypt
                                         </Button>
                                     </CardHeader>
