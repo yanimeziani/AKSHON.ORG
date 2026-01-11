@@ -32,8 +32,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground overflow-x-hidden dark`}
       >
+        {/* Global Aurora Background */}
+        <div className="fixed inset-0 z-[-1] opacity-30 pointer-events-none">
+          <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-primary/20 blur-[150px] rounded-full mix-blend-screen animate-aurora" />
+          <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-secondary/20 blur-[150px] rounded-full mix-blend-screen animate-aurora" style={{ animationDelay: '-10s' }} />
+        </div>
+
         <AnalyticsTracker />
         {children}
         <AnalyticsConsent />

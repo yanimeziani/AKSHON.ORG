@@ -15,9 +15,43 @@ export default function PricingPage() {
     const [selectedTier, setSelectedTier] = useState("Standard");
     const [selectedPrice, setSelectedPrice] = useState("");
 
-    const handleAcquire = (tier: string) => {
-        setSelectedTier(tier);
-        setIsCaptureOpen(true);
+    const handleAcquire = async (tier: string) => {
+        if (tier === "Researcher" || tier === "Arbitrageur") {
+            try {
+                // Call Stripe API
+                const res = await fetch('/api/stripe/checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ tier, billingCycle }),
+                });
+
+                const { sessionId, error } = await res.json();
+
+                if (error) {
+                    console.error("Stripe Error:", error);
+                    // Fallback to capture if stripe fails or display error
+                    setSelectedTier(tier);
+                    setIsCaptureOpen(true);
+                    return;
+                }
+
+                // Redirect to Stripe Checkout
+                const stripe = await import('@stripe/stripe-js').then(m => m.loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''));
+                if (stripe) {
+                    // @ts-ignore
+                    await stripe.redirectToCheckout({ sessionId });
+                }
+            } catch (err) {
+                console.error("Payment initiation failed", err);
+                setSelectedTier(tier);
+                setIsCaptureOpen(true);
+            }
+        } else {
+            setSelectedTier(tier);
+            setIsCaptureOpen(true);
+        }
     };
 
     const handleCrypto = (tier: string, price: string) => {

@@ -5,7 +5,7 @@ const storage = new Storage({
 });
 
 export const bucket = storage.bucket(
-    process.env.GCP_BUCKET_NAME || ""
+    process.env.GCP_BUCKET_NAME || "akshon-research-corpus"
 );
 
 /**
