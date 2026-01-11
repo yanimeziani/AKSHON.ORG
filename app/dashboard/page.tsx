@@ -65,7 +65,7 @@ function DashboardContent() {
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="glass p-12 rounded-[40px] border-primary/20 text-center max-w-2xl w-full relative overflow-hidden"
+                    className="glass-chroma p-12 rounded-[40px] border-primary/20 text-center max-w-2xl w-full relative overflow-hidden"
                 >
                     <div className="absolute inset-0 bg-primary/10 blur-[100px]" />
                     <div className="relative z-10">
@@ -98,7 +98,7 @@ function DashboardContent() {
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="glass p-12 rounded-[40px] border-primary/20 text-center max-w-md w-full"
+                    className="glass-chroma p-12 rounded-[40px] border-primary/20 text-center max-w-md w-full"
                 >
                     <Shield className="w-16 h-16 text-primary mx-auto mb-8 animate-pulse" />
                     <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter mb-4">Access Denied</h1>
@@ -180,7 +180,7 @@ function DashboardContent() {
                 >
                     {/* Settlement & Billing */}
                     <motion.div variants={itemVariants} className="lg:col-span-1 space-y-6">
-                        <Card className="glass border-primary/20 bg-primary/5">
+                        <Card className="glass-chroma border-primary/20 bg-primary/5">
                             <CardHeader>
                                 <div className="flex items-center justify-between mb-2">
                                     <Wallet className="w-8 h-8 text-primary" />
@@ -215,7 +215,7 @@ function DashboardContent() {
                             </CardContent>
                         </Card>
 
-                        <Card className="glass border-white/5">
+                        <Card className="glass-chroma border-white/5">
                             <CardHeader>
                                 <CardTitle className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
                                     <Shield className="w-4 h-4 text-emerald-400" />
@@ -241,7 +241,7 @@ function DashboardContent() {
                     <motion.div variants={itemVariants} className="lg:col-span-2 space-y-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             {/* Synthesis Engine (Live) */}
-                            <Card className="glass border-white/5 hover:border-primary/20 transition-all group overflow-hidden">
+                            <Card className="glass-chroma border-white/5 hover:border-primary/20 transition-all group overflow-hidden">
                                 <CardHeader>
                                     <div className="flex items-center justify-between">
                                         <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
@@ -286,7 +286,7 @@ function DashboardContent() {
                             </Card>
 
                             {/* Self-Hosted Node */}
-                            <Card className="glass border-white/5 hover:border-blue-500/20 transition-all group overflow-hidden">
+                            <Card className="glass-chroma border-white/5 hover:border-blue-500/20 transition-all group overflow-hidden">
                                 <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                                     <Terminal className="w-24 h-24" />
                                 </div>
@@ -318,7 +318,7 @@ function DashboardContent() {
                         </div>
 
                         {/* Corpus Contribution */}
-                        <Card className="glass border-white/5 overflow-hidden relative group">
+                        <Card className="glass-chroma border-white/5 overflow-hidden relative group">
                             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent pointer-events-none" />
                             <CardHeader className="flex flex-row items-center justify-between">
                                 <div>
@@ -363,7 +363,7 @@ function DashboardContent() {
                         </Card>
 
                         {/* Dataset Aggregator */}
-                        <Card className="glass border-white/5 hover:border-primary/20 transition-all group">
+                        <Card className="glass-chroma border-white/5 hover:border-primary/20 transition-all group">
                             <CardHeader className="flex flex-row items-center justify-between">
                                 <div>
                                     <CardTitle className="text-2xl font-black text-white uppercase italic tracking-tighter mb-1">

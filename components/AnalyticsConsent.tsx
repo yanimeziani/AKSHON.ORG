@@ -35,7 +35,7 @@ export default function AnalyticsConsent() {
                     exit={{ y: 100, opacity: 0 }}
                     className="fixed bottom-8 left-8 right-8 md:left-auto md:right-8 md:w-[400px] z-[200]"
                 >
-                    <div className="glass border-primary/20 p-6 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden">
+                    <div className="glass-chroma border-primary/20 p-6 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
 
                         <div className="flex items-start gap-4 mb-4">

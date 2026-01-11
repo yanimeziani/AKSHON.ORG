@@ -79,7 +79,7 @@ export default function LoginPage() {
                     </span>
                 </Link>
 
-                <div className="glass p-8 md:p-12 rounded-[40px] border-white/5 relative overflow-hidden">
+                <div className="glass-chroma p-8 md:p-12 rounded-[40px] border-white/5 relative overflow-hidden">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
 
                     <header className="text-center mb-10">

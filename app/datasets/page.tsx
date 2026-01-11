@@ -70,7 +70,7 @@ export default function DatasetsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
                     {DATASET_PACKS.map((pack) => (
-                        <Card key={pack.id} className="glass border-white/5 hover:border-primary/30 transition-all group relative overflow-hidden">
+                        <Card key={pack.id} className="glass-chroma border-white/5 hover:border-primary/30 transition-all group relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                                 <Database className="w-24 h-24" />
                             </div>
@@ -125,7 +125,7 @@ export default function DatasetsPage() {
                 </div>
 
                 {/* MCP Info Section */}
-                <Card className="glass border-primary/20 bg-primary/5">
+                <Card className="glass-chroma border-primary/20 bg-primary/5">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-3 text-xl font-bold text-white uppercase tracking-wider">
                             <Terminal className="w-6 h-6 text-primary" />

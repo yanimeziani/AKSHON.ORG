@@ -192,7 +192,7 @@ export default function PricingPage() {
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.1 }}
-                            className={`relative p-8 md:p-10 rounded-[40px] glass border-white/5 flex flex-col transform transition-all hover:translate-y-[-8px] ${tier.popular ? "border-primary/30 shadow-[0_0_80px_rgba(212,175,55,0.05)] bg-primary/[0.02]" : ""
+                            className={`relative p-8 md:p-10 rounded-[40px] glass-chroma border-white/5 flex flex-col transform transition-all hover:translate-y-[-8px] ${tier.popular ? "border-primary/30 shadow-[0_0_80px_rgba(212,175,55,0.05)] bg-primary/[0.02]" : ""
                                 }`}
                         >
                             {tier.popular && (
@@ -268,7 +268,7 @@ export default function PricingPage() {
                                 initial={{ opacity: 0 }}
                                 whileInView={{ opacity: 1 }}
                                 viewport={{ once: true }}
-                                className="glass p-6 rounded-3xl border-white/5"
+                                className="glass-chroma p-6 rounded-3xl border-white/5"
                             >
                                 <h4 className="text-white font-bold uppercase italic tracking-tight mb-3 flex items-center gap-2">
                                     <div className="w-1.5 h-1.5 rounded-full bg-primary" />

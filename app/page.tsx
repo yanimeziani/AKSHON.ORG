@@ -21,7 +21,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-background overflow-hidden text-foreground">
+    <main id="main-content" className="min-h-screen bg-background overflow-hidden text-foreground">
       <Navbar />
       <Hero />
 

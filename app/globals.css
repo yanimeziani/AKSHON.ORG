@@ -60,7 +60,7 @@
   --secondary-foreground: oklch(0.3 0.02 240);
 
   --muted: oklch(0.94 0.01 240);
-  --muted-foreground: oklch(0.6 0.02 240);
+  --muted-foreground: oklch(0.5 0.02 240); /* Improved contrast: 4.5:1+ for WCAG AA */
 
   --accent: oklch(0.95 0.01 240);
   --accent-foreground: oklch(0.2 0.02 240);
@@ -168,5 +168,41 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
+  }
+
+  /* Respect user's motion preferences for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Improve focus visibility for keyboard navigation */
+  *:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* Skip link for keyboard navigation */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    font-weight: bold;
+    z-index: 1000;
+    border-radius: 0 0 0.5rem 0;
+  }
+
+  .skip-link:focus {
+    top: 0;
   }
 }

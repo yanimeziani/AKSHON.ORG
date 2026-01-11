@@ -100,7 +100,7 @@ export default function NodeSetupDocs() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.3 + (i * 0.1) }}
-                                className="p-6 rounded-2xl glass border-white/5"
+                                className="p-6 rounded-2xl glass-chroma border-white/5"
                             >
                                 <feat.icon className={`w-8 h-8 ${feat.color} mb-4`} />
                                 <h3 className="text-white font-bold uppercase tracking-widest text-xs mb-2">{feat.title}</h3>

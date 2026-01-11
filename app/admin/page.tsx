@@ -86,7 +86,7 @@ export default function AdminDashboard() {
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="glass p-12 rounded-[40px] border-primary/20 text-center max-w-md w-full"
+                    className="glass-chroma p-12 rounded-[40px] border-primary/20 text-center max-w-md w-full"
                 >
                     <Shield className="w-16 h-16 text-primary mx-auto mb-8 animate-pulse" />
                     <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter mb-4">Restricted Access</h1>
@@ -158,7 +158,7 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-1 gap-4">
                     {activeTab === "leads" ? (
                         leads.length === 0 ? (
-                            <div className="glass p-20 rounded-[40px] text-center border-white/5">
+                            <div className="glass-chroma p-20 rounded-[40px] text-center border-white/5">
                                 <Zap className="w-12 h-12 text-white/10 mx-auto mb-6" />
                                 <p className="text-muted-foreground font-light italic text-lg">No kinetic signals detected in the lead buffer.</p>
                             </div>
@@ -169,7 +169,7 @@ export default function AdminDashboard() {
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.05 }}
-                                    className="glass p-6 md:p-8 rounded-3xl border-white/5 hover:border-primary/20 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
+                                    className="glass-chroma p-6 md:p-8 rounded-3xl border-white/5 hover:border-primary/20 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
                                 >
                                     <div className="flex items-center gap-6">
                                         <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center text-primary border border-white/10 shrink-0">
@@ -202,7 +202,7 @@ export default function AdminDashboard() {
                         )
                     ) : (
                         payments.length === 0 ? (
-                            <div className="glass p-20 rounded-[40px] text-center border-white/5">
+                            <div className="glass-chroma p-20 rounded-[40px] text-center border-white/5">
                                 <Shield className="w-12 h-12 text-white/10 mx-auto mb-6" />
                                 <p className="text-muted-foreground font-light italic text-lg">No on-chain settlements detected.</p>
                             </div>
@@ -213,7 +213,7 @@ export default function AdminDashboard() {
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.05 }}
-                                    className="glass p-6 md:p-8 rounded-3xl border-white/5 hover:border-primary/20 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
+                                    className="glass-chroma p-6 md:p-8 rounded-3xl border-white/5 hover:border-primary/20 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
                                 >
                                     <div className="flex items-center gap-6">
                                         <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20 shrink-0">
