@@ -1,51 +1,31 @@
-
 import Navbar from "@/components/Navbar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Database, Download, Terminal, Copy, Check, Server, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TrackedLink from "@/components/TrackedLink";
 
-// Mock Data for Curated Packs
-const DATASET_PACKS = [
-    {
-        id: "finance-q1-2024",
-        title: "Global Finance Q1 2024",
-        description: "Curated 10k documents on global market trends, central bank minutes, and crypto liquidity flows.",
-        size: "2.4 GB",
-        items: "12,403 Files",
-        tags: ["Finance", "Macro", "Crypto"],
-        mcpId: "mcp://akshon.org/d/finance-q1-24"
-    },
-    {
-        id: "code-instruct-v3",
-        title: "Sovereign Code Instruct v3",
-        description: "High-quality instruction tuning dataset for coding agents. Filtered for security and performance.",
-        size: "4.1 GB",
-        items: "150k Samples",
-        tags: ["Coding", "Instruct", "Python"],
-        mcpId: "mcp://akshon.org/d/code-instruct-v3"
-    },
-    {
-        id: "bio-synth-alpha",
-        title: "Bio-Synthetic Alpha",
-        description: "Research papers and datasets on synthetic biology and active inference models.",
-        size: "1.2 GB",
-        items: "5,200 Files",
-        tags: ["Biology", "Active Inference", "Research"],
-        mcpId: "mcp://akshon.org/d/bio-synth-a"
-    },
-    {
-        id: "akshon-internal-logs",
-        title: "Akshon Platform Logs (Anonymized)",
-        description: "System logs and usage patterns for optimizing agentic workflows. Anonymized for privacy.",
-        size: "800 MB",
-        items: "2.1M Entries",
-        tags: ["Internal", "Logs", "Optimization"],
-        mcpId: "mcp://akshon.org/d/logs-anon"
-    }
-];
+// Fetch datasets from Firebase backend
+async function getDatasets() {
+    try {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        const response = await fetch(`${baseUrl}/api/datasets`, {
+            cache: 'no-store', // Always fetch fresh data
+        });
 
-export default function DatasetsPage() {
+        if (!response.ok) {
+            throw new Error('Failed to fetch datasets');
+        }
+
+        const data = await response.json();
+        return data.datasets || [];
+    } catch (error) {
+        console.error('Error fetching datasets:', error);
+        return []; // Return empty array on error
+    }
+}
+
+export default async function DatasetsPage() {
+    const DATASET_PACKS = await getDatasets();
     return (
         <main className="min-h-screen bg-black pt-32 pb-24">
             <Navbar />
@@ -67,6 +47,17 @@ export default function DatasetsPage() {
                         Directly compatible with your MCP fleet.
                     </p>
                 </header>
+
+                {DATASET_PACKS.length === 0 && (
+                    <div className="text-center py-16">
+                        <div className="p-4 bg-white/5 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                            <Database className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                        <p className="text-muted-foreground text-sm">
+                            No datasets available at the moment. Check back soon!
+                        </p>
+                    </div>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
                     {DATASET_PACKS.map((pack) => (

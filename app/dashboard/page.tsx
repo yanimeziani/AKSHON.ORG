@@ -36,6 +36,10 @@ function DashboardContent() {
 
     const [feed, setFeed] = useState<any[]>([]);
     const [insights, setInsights] = useState<any[]>([]);
+    const [feedLoading, setFeedLoading] = useState(true);
+    const [insightsLoading, setInsightsLoading] = useState(true);
+    const [feedError, setFeedError] = useState<string | null>(null);
+    const [insightsError, setInsightsError] = useState<string | null>(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -43,9 +47,41 @@ function DashboardContent() {
             setLoading(false);
         });
 
-        // Fetch feed and insights
-        fetch('/api/feed').then(res => res.json()).then(data => setFeed(data.feed)).catch(console.error);
-        fetch('/api/synthesis').then(res => res.json()).then(data => setInsights(data.insights)).catch(console.error);
+        // Fetch feed with error handling
+        setFeedLoading(true);
+        fetch('/api/feed')
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to fetch feed');
+                return res.json();
+            })
+            .then(data => {
+                setFeed(data.feed || []);
+                setFeedError(null);
+            })
+            .catch(error => {
+                console.error('Error fetching feed:', error);
+                setFeedError(error.message);
+                setFeed([]);
+            })
+            .finally(() => setFeedLoading(false));
+
+        // Fetch insights with error handling
+        setInsightsLoading(true);
+        fetch('/api/synthesis')
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to fetch insights');
+                return res.json();
+            })
+            .then(data => {
+                setInsights(data.insights || []);
+                setInsightsError(null);
+            })
+            .catch(error => {
+                console.error('Error fetching insights:', error);
+                setInsightsError(error.message);
+                setInsights([]);
+            })
+            .finally(() => setInsightsLoading(false));
 
         return () => unsubscribe();
     }, []);
@@ -257,7 +293,20 @@ function DashboardContent() {
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    {insights.length > 0 ? (
+                                    {insightsLoading ? (
+                                        <div className="flex flex-col items-center justify-center h-32 text-center">
+                                            <div className="w-6 h-6 border-2 border-white/20 border-t-primary rounded-full animate-spin mb-2" />
+                                            <span className="text-[10px] text-white/40 uppercase tracking-widest">Synthesizing...</span>
+                                        </div>
+                                    ) : insightsError ? (
+                                        <div className="flex flex-col items-center justify-center h-32 text-center p-4">
+                                            <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center mb-3">
+                                                <span className="text-red-400 text-xl">⚠</span>
+                                            </div>
+                                            <span className="text-[10px] text-red-400/80 uppercase tracking-widest mb-2">Connection Error</span>
+                                            <p className="text-[9px] text-muted-foreground">{insightsError}</p>
+                                        </div>
+                                    ) : insights.length > 0 ? (
                                         <div className="space-y-3">
                                             {insights.slice(0, 2).map((insight, i) => (
                                                 <div key={i} className="p-3 rounded-lg bg-white/5 border border-white/10 hover:border-primary/30 transition-all cursor-pointer">
@@ -273,8 +322,10 @@ function DashboardContent() {
                                         </div>
                                     ) : (
                                         <div className="flex flex-col items-center justify-center h-32 text-center">
-                                            <div className="w-6 h-6 border-2 border-white/20 border-t-primary rounded-full animate-spin mb-2" />
-                                            <span className="text-[10px] text-white/40 uppercase tracking-widest">Synthesizing...</span>
+                                            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center mb-3">
+                                                <Cpu className="w-5 h-5 text-white/30" />
+                                            </div>
+                                            <span className="text-[10px] text-white/40 uppercase tracking-widest">No insights available</span>
                                         </div>
                                     )}
                                     <div className="pt-2">

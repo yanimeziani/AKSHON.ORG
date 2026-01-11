@@ -42,11 +42,30 @@ export default function CryptoPayment({ isOpen, onClose, tier, price }: CryptoPa
 
         setStep("submitting");
 
-        // Simulation of node verification delay
-        // In a real sovereign setup, this would query a local Bitcoin/Ethereum node
-        await new Promise(resolve => setTimeout(resolve, 3000));
-
         try {
+            // Verify transaction on blockchain
+            const verifyResponse = await fetch('/api/verify-crypto', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    txHash,
+                    network: selectedNetwork.name,
+                    expectedAddress: WALLET_ADDRESS,
+                }),
+            });
+
+            const verificationData = await verifyResponse.json();
+
+            // Save payment record to Firebase regardless of verification status
+            // Admin can manually review pending transactions
+            const paymentStatus = verificationData.verified
+                ? 'confirmed'
+                : verificationData.status === 'pending'
+                ? 'pending_verification'
+                : 'pending_manual_review';
+
             await addDoc(collection(db, "payments"), {
                 email,
                 txHash,
@@ -54,8 +73,17 @@ export default function CryptoPayment({ isOpen, onClose, tier, price }: CryptoPa
                 price,
                 network: selectedNetwork.name,
                 timestamp: serverTimestamp(),
-                status: "authorized_pending_block_confirmations", // Updated status to reflect "authorization"
+                status: paymentStatus,
+                verificationData: {
+                    verified: verificationData.verified,
+                    blockNumber: verificationData.blockNumber,
+                    from: verificationData.from,
+                    to: verificationData.to,
+                    verifiedAt: verificationData.verified ? new Date().toISOString() : null,
+                },
+                paymentMethod: 'crypto',
             });
+
             setStep("success");
         } catch (error) {
             console.error("Error submitting payment:", error);
