@@ -15,10 +15,10 @@ export default function Hero() {
                     src="/images/hero.png"
                     alt="Knowledge Flow"
                     fill
-                    className="object-cover opacity-60 scale-105"
+                    className="object-cover opacity-20 scale-105"
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-black via-black/40 to-black z-10" />
+                <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background z-10" />
             </div>
 
             <div className="container relative z-20 px-4 mx-auto text-center">
@@ -27,12 +27,12 @@ export default function Hero() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                 >
-                    <span className="inline-block px-4 py-1.5 mb-6 text-xs font-semibold tracking-widest text-primary uppercase border border-primary/30 rounded-full glass glow-gold">
+                    <span className="inline-block px-4 py-1.5 mb-6 text-xs font-semibold tracking-widest text-primary uppercase border border-primary/30 rounded-full glass-chroma">
                         The Sovereign Arbitrageur
                     </span>
-                    <h1 className="mb-8 text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white">
-                        AK<span className="text-primary">SHON</span>
-                        <span className="block text-2xl md:text-3xl font-light tracking-[0.3em] mt-4 opacity-80">
+                    <h1 className="mb-8 text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-foreground">
+                        AK<span className="text-muted-foreground">SHON</span>
+                        <span className="block text-2xl md:text-3xl font-light tracking-[0.3em] mt-4 opacity-80 text-foreground/80">
                             KINETIC INSIGHT
                         </span>
                     </h1>
@@ -45,7 +45,7 @@ export default function Hero() {
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link href="/corpus">
-                            <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-full group bg-primary hover:bg-primary/90 text-black">
+                            <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-full group bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg">
                                 Access the Vault
                                 <ChevronRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                             </Button>
@@ -67,10 +67,10 @@ export default function Hero() {
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 + i * 0.1, duration: 0.5 }}
-                            className="p-6 rounded-2xl glass border-white/5 hover:border-primary/30 transition-colors group text-left"
+                            className="p-6 rounded-2xl glass-chroma border border-white/40 hover:border-primary/30 transition-colors group text-left shadow-soft-depth"
                         >
                             <item.icon className="w-8 h-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                            <h3 className="text-lg font-bold text-white mb-1">{item.label}</h3>
+                            <h3 className="text-lg font-bold text-foreground mb-1">{item.label}</h3>
                             <p className="text-sm text-muted-foreground">{item.sub}</p>
                         </motion.div>
                     ))}
@@ -78,7 +78,7 @@ export default function Hero() {
             </div>
 
             {/* Background Pulse */}
-            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent blur-sm animate-pulse" />
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent blur-sm animate-pulse" />
         </section>
     );
 }
