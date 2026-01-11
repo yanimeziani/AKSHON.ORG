@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import { listResearchPapers } from "@/lib/gcp";
+import { listResearchPapers, listFiles } from "@/lib/gcp";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { FileText, Download, ExternalLink, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,10 +13,11 @@ export default async function CorpusPage() {
 
     try {
         papers = await listResearchPapers("research/");
-        restrictedAreas = []; // TODO: Fetch from secure source
+        restrictedAreas = await listFiles(["secrets/", "admin/"]);
     } catch (error) {
         console.error("GCP Fetch Error:", error);
         papers = [];
+        restrictedAreas = [];
     }
 
     return (
