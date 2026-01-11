@@ -34,9 +34,21 @@ async function fetchArxivPapers() {
     return papers;
 }
 
+type UploadFunction = (fileName: string, content: Buffer | string, contentType?: string) => Promise<void>;
+
 async function runScraper() {
     // Dynamically import to ensure env vars are loaded first
-    const { uploadToCorpus } = await import("../lib/gcp");
+    let uploadToCorpus: UploadFunction;
+
+    try {
+        const gcp = await import("../lib/gcp");
+        uploadToCorpus = gcp.uploadToCorpus;
+    } catch (e) {
+        console.warn("⚠️ Could not load GCP module (likely due to missing credentials). Running in simulation mode.");
+        uploadToCorpus = async (filename: string, content: Buffer | string) => {
+            console.log(`[SIMULATION] Uploading ${filename} (Size: ${content.length})`);
+        };
+    }
 
     console.log("🚀 Starting GCP Corpus Scraper Service...");
     console.log(`📡 Monitoring: ${SEARCH_QUERY}`);
