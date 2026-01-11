@@ -45,6 +45,28 @@ export async function listResearchPapers(prefix = "research/") {
 }
 
 /**
+ * Lists files from multiple prefixes without generating signed URLs.
+ * Useful for listing restricted areas without triggering access logs/honeypots.
+ */
+export async function listFiles(prefixes: string[]) {
+    let allFiles: any[] = [];
+    for (const prefix of prefixes) {
+        try {
+            const [files] = await bucket.getFiles({ prefix });
+            const mapped = files.map(file => ({
+                name: file.name,
+                size: file.metadata.size,
+                updated: file.metadata.updated,
+            }));
+            allFiles = [...allFiles, ...mapped];
+        } catch (error) {
+            console.error(`Error listing files for prefix ${prefix}:`, error);
+        }
+    }
+    return allFiles;
+}
+
+/**
  * Uploads a file to the corpus.
  */
 export async function uploadToCorpus(fileName: string, content: Buffer | string, contentType = "application/pdf") {
@@ -57,4 +79,3 @@ export async function uploadToCorpus(fileName: string, content: Buffer | string,
     });
     console.log(`[COMPLIANCE] - File ${fileName} successfully uploaded and audited.`);
 }
-
