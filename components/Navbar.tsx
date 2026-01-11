@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import LeadCapture from "./LeadCapture";
+import GetEdgeJourney from "./GetEdgeJourney";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import TelemetryToggle from "./TelemetryToggle";
@@ -98,7 +98,7 @@ export default function Navbar() {
                     </Button>
                 </div>
             </div>
-            <LeadCapture isOpen={isCaptureOpen} onClose={() => setIsCaptureOpen(false)} tier="Alpha Access" />
+            <GetEdgeJourney isOpen={isCaptureOpen} onClose={() => setIsCaptureOpen(false)} tier="Alpha Access" />
         </motion.nav>
 
     );

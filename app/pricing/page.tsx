@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Zap, Shield, Crown, HelpCircle, Wallet } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import LeadCapture from "@/components/LeadCapture";
+import GetEdgeJourney from "@/components/GetEdgeJourney";
 import CryptoPayment from "@/components/CryptoPayment";
 
 export default function PricingPage() {
@@ -249,7 +249,7 @@ export default function PricingPage() {
                 </section>
             </div>
 
-            <LeadCapture
+            <GetEdgeJourney
                 isOpen={isCaptureOpen}
                 onClose={() => setIsCaptureOpen(false)}
                 tier={selectedTier}
