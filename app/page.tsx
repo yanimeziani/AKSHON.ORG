@@ -48,20 +48,6 @@ export default function Home() {
                 href: "/corpus",
                 desc: "High-integrity research vault hosted on GCP with cryptographic verification.",
                 color: "text-blue-400"
-              },
-              {
-                title: "AI Synthesis",
-                icon: Brain,
-                href: "/synthesis",
-                desc: "Proprietary models finding structural alpha across disparate research domains.",
-                color: "text-primary"
-              },
-              {
-                title: "Strategic Fleet",
-                icon: Cpu,
-                href: "/fleet",
-                desc: "Global command center for infrastructure, ingestion, and real-time scaling.",
-                color: "text-emerald-400"
               }
             ].map((pillar, i) => (
               <motion.div
@@ -164,7 +150,7 @@ export default function Home() {
               { title: "Structured Feeds", icon: Activity, desc: "Clean JSON research deltas processed from raw PDF streams." },
               { title: "API First", icon: Cpu, desc: "REST & GraphQL conduits for seamless agent integration." },
               { title: "Verifiable IDs", icon: Shield, desc: "Cryptographic proofs for every insight synthesized." },
-              { title: "Global Scale", icon: Zap, desc: "Ingesting 100k+ research papers per minute via Fleet." }
+              { title: "Global Scale", icon: Zap, desc: "Ingesting research papers at global scale." }
             ].map((feature, i) => (
               <motion.div
                 key={i}
@@ -178,63 +164,6 @@ export default function Home() {
                 </div>
                 <h3 className="text-lg font-bold text-white uppercase italic mb-2">{feature.title}</h3>
                 <p className="text-[10px] text-muted-foreground uppercase font-medium leading-relaxed italic">{feature.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Live Feed Section */}
-      <section className="py-32 bg-white/[0.02] border-y border-white/5 relative">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--primary)_0%,_transparent_15%)] opacity-[0.03] pointer-events-none" />
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-            <div>
-              <motion.h2
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                className="text-4xl font-black text-white italic uppercase tracking-tighter mb-4"
-              >
-                Kinetic <span className="text-primary italic">Live Feed</span>
-              </motion.h2>
-              <p className="text-muted-foreground font-light italic text-lg">
-                Real-time ingestion from 500+ global research sources.
-              </p>
-            </div>
-            <motion.div
-              animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="text-primary font-mono text-[10px] font-bold uppercase tracking-[0.3em] bg-primary/10 px-6 py-2 rounded-full border border-primary/20"
-            >
-              ● POLLING_GCP_BACKEND_VAULT_01
-            </motion.div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { title: "Non-Euclidean Latent Spaces", category: "AI/MATH", time: "2m ago" },
-              { title: "Synthetic Proteomics v4", category: "BIO/SYNTH", time: "12m ago" },
-              { title: "Quantum Error Arbitrage", category: "PHYS/CRYPTO", time: "45m ago" },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.1 }}
-                className="p-8 rounded-3xl glass border-white/5 hover:border-primary/10 transition-colors flex flex-col justify-between h-48"
-              >
-                <div>
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="text-[10px] font-mono text-primary uppercase tracking-widest">{item.category}</span>
-                    <span className="text-[10px] text-white/20 uppercase font-black">{item.time}</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-white italic uppercase tracking-tight leading-tight">
-                    {item.title}
-                  </h3>
-                </div>
-                <div className="text-[9px] text-white/40 uppercase tracking-[0.2em] font-black italic">
-                  Validated Entry_ID_{8823 + i}
-                </div>
               </motion.div>
             ))}
           </div>
@@ -291,8 +220,8 @@ export default function Home() {
             <span className="text-sm font-black text-white uppercase italic tracking-widest">Akshon.org</span>
           </div>
           <div className="flex gap-8 text-[10px] font-black text-white/40 uppercase tracking-widest">
-            <Link href="/corpus" className="hover:text-primary transition-colors">Documentation</Link>
-            <Link href="/fleet" className="hover:text-primary transition-colors">API Conduit</Link>
+            <Link href="/docs/node" className="hover:text-primary transition-colors">Documentation</Link>
+
             <a href="https://discord.gg/QVsmmNK2" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Community</a>
             <Link href="/terms" className="hover:text-primary transition-colors">Sovereign Terms</Link>
             <Link href="/privacy" className="hover:text-primary transition-colors">Privacy</Link>

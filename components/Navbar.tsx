@@ -46,7 +46,7 @@ export default function Navbar() {
                 </Link>
 
                 <div className="hidden md:flex items-center gap-8">
-                    {["Corpus", "Synthesis", "Fleet", "Pricing"].map((item) => (
+                    {["Corpus", "Pricing"].map((item) => (
                         <Link
                             key={item}
                             href={`/${item.toLowerCase()}`}
@@ -69,7 +69,7 @@ export default function Navbar() {
                     </a>
                     {user ? (
                         <div className="flex items-center gap-2">
-                            <Link href="/corpus">
+                            <Link href="/dashboard">
                                 <Button variant="ghost" className="hidden sm:inline-flex text-muted-foreground font-bold hover:text-white uppercase tracking-widest text-xs">
                                     Dashboard
                                 </Button>

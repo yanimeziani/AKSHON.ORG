@@ -50,11 +50,7 @@ export default function Hero() {
                                 <ChevronRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                             </Button>
                         </Link>
-                        <Link href="/fleet">
-                            <Button size="lg" variant="outline" className="h-14 px-8 text-lg font-bold rounded-full glass hover:bg-white/5">
-                                Live Aggregator
-                            </Button>
-                        </Link>
+
                     </div>
                 </motion.div>
 
