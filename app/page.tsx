@@ -7,7 +7,7 @@ import { Brain, Database, Cpu, ArrowRight, Zap, Shield, Crown, Activity } from "
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-import LeadCapture from "@/components/LeadCapture";
+import GetEdgeJourney from "@/components/GetEdgeJourney";
 import { useState } from "react";
 
 export default function Home() {
@@ -205,7 +205,7 @@ export default function Home() {
         </div>
       </section>
 
-      <LeadCapture
+      <GetEdgeJourney
         isOpen={isCaptureOpen}
         onClose={() => setIsCaptureOpen(false)}
         tier={selectedTier}
