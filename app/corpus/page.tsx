@@ -3,6 +3,7 @@ import { listResearchPapers } from "@/lib/gcp";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { FileText, Download, ExternalLink, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import TrackedLink from "@/components/TrackedLink";
 
 export const dynamic = "force-dynamic";
 
@@ -58,15 +59,15 @@ export default async function CorpusPage() {
                             <CardContent>
                                 <div className="flex gap-2">
                                     <Button asChild variant="outline" size="sm" className="flex-1 rounded-full text-xs font-bold uppercase tracking-widest h-9 border-white/10 text-white hover:bg-white/10">
-                                        <a href={paper.url} target="_blank" rel="noopener noreferrer">
+                                        <TrackedLink href={paper.url} target="_blank" rel="noopener noreferrer" eventName={`download_${paper.name}`} metadata={{ paperName: paper.name }}>
                                             <Download className="w-3 h-3 mr-2" />
                                             Download
-                                        </a>
+                                        </TrackedLink>
                                     </Button>
                                     <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full text-muted-foreground hover:text-primary">
-                                        <a href={paper.url} target="_blank" rel="noopener noreferrer">
+                                        <TrackedLink href={paper.url} target="_blank" rel="noopener noreferrer" eventName={`open_${paper.name}`} metadata={{ paperName: paper.name }}>
                                             <ExternalLink className="w-4 h-4" />
-                                        </a>
+                                        </TrackedLink>
                                     </Button>
                                 </div>
                             </CardContent>

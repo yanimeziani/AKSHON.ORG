@@ -20,6 +20,15 @@ export default function Navbar() {
         return () => unsubscribe();
     }, []);
 
+    const handleSignOut = async () => {
+        try {
+            await auth.signOut();
+            setUser(null);
+        } catch (err) {
+            console.error("Error signing out:", err);
+        }
+    };
+
     return (
         <motion.nav
             initial={{ y: -100 }}
@@ -49,6 +58,7 @@ export default function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-4">
+                    <TelemetryToggle />
                     <a
                         href="https://discord.gg/QVsmmNK2"
                         target="_blank"
@@ -57,11 +67,28 @@ export default function Navbar() {
                     >
                         Community
                     </a>
-                    <Link href={user ? "/corpus" : "/login"}>
-                        <Button variant="ghost" className="hidden sm:inline-flex text-muted-foreground font-bold hover:text-white uppercase tracking-widest text-xs">
-                            {user ? "Dashboard" : "Log In"}
-                        </Button>
-                    </Link>
+                    {user ? (
+                        <div className="flex items-center gap-2">
+                            <Link href="/corpus">
+                                <Button variant="ghost" className="hidden sm:inline-flex text-muted-foreground font-bold hover:text-white uppercase tracking-widest text-xs">
+                                    Dashboard
+                                </Button>
+                            </Link>
+                            <Button
+                                onClick={handleSignOut}
+                                variant="ghost"
+                                className="hidden sm:inline-flex text-white/40 font-bold hover:text-red-400 uppercase tracking-widest text-[9px]"
+                            >
+                                Sign Out
+                            </Button>
+                        </div>
+                    ) : (
+                        <Link href="/login">
+                            <Button variant="ghost" className="hidden sm:inline-flex text-muted-foreground font-bold hover:text-white uppercase tracking-widest text-xs">
+                                Log In
+                            </Button>
+                        </Link>
+                    )}
                     <Button
                         onClick={() => setIsCaptureOpen(true)}
                         size="sm"
