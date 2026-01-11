@@ -20,8 +20,13 @@ export default function PrivacyPage() {
                 </section>
 
                 <section className="mb-12">
-                    <h2 className="text-xl font-bold text-white uppercase tracking-widest mb-4">3. COOKIES</h2>
-                    <p>We use session-based identifiers to maintain your connection to the Synthesis engine. No third-party tracking pixels are utilized.</p>
+                    <h2 className="text-xl font-bold text-white uppercase tracking-widest mb-4">3. ANALYTICS TELEMETRY</h2>
+                    <p>We utilize high-integrity, anonymous telemetry to optimize the matrix performance. You have the sovereign right to opt-out of all tracking via the telemetry console. No personal identifiers or IP addresses are linked to your research sessions.</p>
+                </section>
+
+                <section className="mb-12">
+                    <h2 className="text-xl font-bold text-white uppercase tracking-widest mb-4">4. COOKIES & LOCAL STORAGE</h2>
+                    <p>We use session-based identifiers and localStorage to maintain your connection to the Synthesis engine and remember your telemetry preferences. No third-party tracking pixels are utilized.</p>
                 </section>
 
                 <p className="text-[10px] uppercase font-mono mt-20 opacity-30">
