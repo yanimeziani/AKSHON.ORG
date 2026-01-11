@@ -17,25 +17,36 @@ import {
     CheckCircle2,
     Layers
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import Link from "next/link";
 import CryptoPayment from "@/components/CryptoPayment";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
+import { useSearchParams } from "next/navigation";
 
-export default function DashboardPage() {
+function DashboardContent() {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [isPaymentOpen, setIsPaymentOpen] = useState(false);
     const [selectedTier, setSelectedTier] = useState({ name: "Pro", price: "$49" });
+    const searchParams = useSearchParams();
+    const isSuccess = searchParams.get('success');
+
+    const [feed, setFeed] = useState<any[]>([]);
+    const [insights, setInsights] = useState<any[]>([]);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setUser(user);
             setLoading(false);
         });
+
+        // Fetch feed and insights
+        fetch('/api/feed').then(res => res.json()).then(data => setFeed(data.feed)).catch(console.error);
+        fetch('/api/synthesis').then(res => res.json()).then(data => setInsights(data.insights)).catch(console.error);
+
         return () => unsubscribe();
     }, []);
 
@@ -44,6 +55,39 @@ export default function DashboardPage() {
             <div className="min-h-screen bg-black flex items-center justify-center">
                 <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
+        );
+    }
+
+    if (isSuccess) {
+        return (
+            <main className="min-h-screen bg-black flex items-center justify-center p-4">
+                <Navbar />
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="glass p-12 rounded-[40px] border-primary/20 text-center max-w-2xl w-full relative overflow-hidden"
+                >
+                    <div className="absolute inset-0 bg-primary/10 blur-[100px]" />
+                    <div className="relative z-10">
+                        <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-8 border border-primary/30 shadow-[0_0_50px_rgba(212,175,55,0.2)]">
+                            <CheckCircle2 className="w-10 h-10 text-primary" />
+                        </div>
+                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter mb-4">
+                            Signal <span className="text-primary">Acquired</span>
+                        </h1>
+                        <p className="text-muted-foreground font-light mb-8 italic text-lg leading-relaxed">
+                            Your allocation has been secured. Our systems are currently provisioning your dedicated MCP node.
+                            <br /><br />
+                            <span className="text-white font-bold">Please check your email</span> for your access credentials and AKSHON.md configuration.
+                        </p>
+                        <Link href="/">
+                            <Button className="h-14 px-8 bg-primary text-black font-black uppercase tracking-[0.2em] text-xs rounded-xl hover:scale-105 transition-transform">
+                                Return to Base
+                            </Button>
+                        </Link>
+                    </div>
+                </motion.div>
+            </main>
         );
     }
 
@@ -196,34 +240,46 @@ export default function DashboardPage() {
                     {/* MCP & Infrastructure */}
                     <motion.div variants={itemVariants} className="lg:col-span-2 space-y-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {/* Hosted MCP */}
+                            {/* Synthesis Engine (Live) */}
                             <Card className="glass border-white/5 hover:border-primary/20 transition-all group overflow-hidden">
-                                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-                                    <Cpu className="w-24 h-24" />
-                                </div>
                                 <CardHeader>
-                                    <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
-                                        <Cpu className="text-primary w-6 h-6" />
+                                    <div className="flex items-center justify-between">
+                                        <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
+                                            <Cpu className="text-primary w-6 h-6" />
+                                        </div>
+                                        <span className="animate-pulse flex h-2 w-2 rounded-full bg-primary" />
                                     </div>
                                     <CardTitle className="text-2xl font-black text-white uppercase italic tracking-tighter">
-                                        Hosted MCP
+                                        Synthesis <span className="text-primary">Engine</span>
                                     </CardTitle>
                                     <CardDescription className="italic">
-                                        Leverage our high-performance infrastructure.
+                                        Live intelligence stream from the swarm.
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/60">
-                                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                                        99.9% Uptime Guaranteed
-                                    </div>
-                                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/60">
-                                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                                        Full API Access
-                                    </div>
-                                    <div className="pt-4">
-                                        <Button variant="outline" disabled className="w-full border-white/10 text-white/40 font-bold uppercase tracking-widest text-xs h-12 rounded-xl group cursor-not-allowed">
-                                            Manage Fleet (Coming Soon)
+                                    {insights.length > 0 ? (
+                                        <div className="space-y-3">
+                                            {insights.slice(0, 2).map((insight, i) => (
+                                                <div key={i} className="p-3 rounded-lg bg-white/5 border border-white/10 hover:border-primary/30 transition-all cursor-pointer">
+                                                    <div className="flex justify-between items-start mb-1">
+                                                        <h4 className="text-xs font-bold text-white uppercase tracking-tight line-clamp-1">{insight.title}</h4>
+                                                        <span className="text-[9px] text-primary font-mono">{insight.confidence}</span>
+                                                    </div>
+                                                    <p className="text-[10px] text-muted-foreground line-clamp-2 leading-relaxed">
+                                                        {insight.summary}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center h-32 text-center">
+                                            <div className="w-6 h-6 border-2 border-white/20 border-t-primary rounded-full animate-spin mb-2" />
+                                            <span className="text-[10px] text-white/40 uppercase tracking-widest">Synthesizing...</span>
+                                        </div>
+                                    )}
+                                    <div className="pt-2">
+                                        <Button variant="outline" className="w-full border-white/10 hover:bg-white/5 text-primary font-bold uppercase tracking-widest text-xs h-10 rounded-xl">
+                                            View Full Report
                                         </Button>
                                     </div>
                                 </CardContent>
@@ -353,5 +409,13 @@ export default function DashboardPage() {
                 price={selectedTier.price}
             />
         </main>
+    );
+}
+
+export default function DashboardPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-black" />}>
+            <DashboardContent />
+        </Suspense>
     );
 }

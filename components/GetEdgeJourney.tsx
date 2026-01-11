@@ -181,7 +181,7 @@ export default function GetEdgeJourney({ isOpen, onClose, tier = "Standard" }: G
                                                     disabled={status === "loading"}
                                                     className="w-full h-14 rounded-xl bg-primary text-black font-black uppercase tracking-[0.2em] text-xs hover:scale-[1.02] transition-transform shadow-[0_0_30px_rgba(212,175,55,0.2)]"
                                                 >
-                                                    {status === "loading" ? "TRANSMITTING..." : "Initiate Protocol"}
+                                                    {status === "loading" ? "TRANSMITTING..." : (tier === "Researcher" || tier === "Arbitrageur" ? "Proceed to Payment" : "Initiate Protocol")}
                                                     <ArrowRight className="ml-2 w-4 h-4" />
                                                 </Button>
                                                 <p className="text-[9px] text-white/20 text-center uppercase tracking-widest font-black">

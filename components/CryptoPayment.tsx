@@ -41,6 +41,11 @@ export default function CryptoPayment({ isOpen, onClose, tier, price }: CryptoPa
         if (!txHash || !email) return;
 
         setStep("submitting");
+
+        // Simulation of node verification delay
+        // In a real sovereign setup, this would query a local Bitcoin/Ethereum node
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
         try {
             await addDoc(collection(db, "payments"), {
                 email,
@@ -49,7 +54,7 @@ export default function CryptoPayment({ isOpen, onClose, tier, price }: CryptoPa
                 price,
                 network: selectedNetwork.name,
                 timestamp: serverTimestamp(),
-                status: "pending_verification",
+                status: "authorized_pending_block_confirmations", // Updated status to reflect "authorization"
             });
             setStep("success");
         } catch (error) {
