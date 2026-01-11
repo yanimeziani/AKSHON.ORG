@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Copy, Check, ExternalLink, ShieldCheck, Wallet, Globe, Info } from "lucide-react";
 import { Button } from "./ui/button";
@@ -134,8 +135,8 @@ export default function CryptoPayment({ isOpen, onClose, tier, price }: CryptoPa
                                                     key={net.name}
                                                     onClick={() => setSelectedNetwork(net)}
                                                     className={`p-4 rounded-2xl border transition-all flex flex-col items-center gap-2 ${selectedNetwork.name === net.name
-                                                            ? "bg-primary/10 border-primary text-primary shadow-[0_0_20px_rgba(212,175,55,0.1)]"
-                                                            : "bg-white/5 border-white/10 text-white/40 hover:border-white/20"
+                                                        ? "bg-primary/10 border-primary text-primary shadow-[0_0_20px_rgba(212,175,55,0.1)]"
+                                                        : "bg-white/5 border-white/10 text-white/40 hover:border-white/20"
                                                         }`}
                                                 >
                                                     <net.icon className="w-5 h-5" />
@@ -165,9 +166,12 @@ export default function CryptoPayment({ isOpen, onClose, tier, price }: CryptoPa
                                             </div>
                                             <div className="mt-6 flex justify-center">
                                                 <div className="p-4 bg-white rounded-xl shadow-2xl">
-                                                    <img
-                                                        src={`https://chart.googleapis.com/chart?chs=160x160&cht=qr&chl=ethereum:${WALLET_ADDRESS}&choe=UTF-8`}
-                                                        alt="Payment QR"
+                                                    <QRCodeSVG
+                                                        value={`ethereum:${WALLET_ADDRESS}`}
+                                                        size={128}
+                                                        bgColor="#ffffff"
+                                                        fgColor="#000000"
+                                                        level="L"
                                                         className="w-32 h-32"
                                                     />
                                                 </div>
