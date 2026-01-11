@@ -4,11 +4,12 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import LiquidMetalDemo from "@/components/LiquidMetalDemo";
 import { motion } from "framer-motion";
-import { Brain, Database, Cpu, ArrowRight, Zap, Shield, Crown, Activity } from "lucide-react";
+import { Database, Cpu, ArrowRight, Zap, Shield, Activity } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 import GetEdgeJourney from "@/components/GetEdgeJourney";
+import WealthErosion from "@/components/WealthErosion";
 import { useState } from "react";
 
 export default function Home() {
@@ -90,27 +91,31 @@ export default function Home() {
               whileInView={{ opacity: 1, scale: 1 }}
               className="glass-chroma p-12 md:p-24 rounded-[60px] border border-white/40 relative shadow-soft-depth"
             >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-8 py-2 rounded-full font-black uppercase tracking-[0.3em] text-[10px] shadow-lg">
-                The Mission
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white px-8 py-2 rounded-full font-black uppercase tracking-[0.3em] text-[10px] shadow-lg">
+                The Reality
               </div>
 
-              <h2 className="text-3xl md:text-5xl font-black text-foreground italic uppercase tracking-tighter mb-16 text-center">
-                Stop <span className="text-muted-foreground">Speculating</span>. <br />Start <span className="text-primary italic">Executing</span>.
+              <h2 className="text-3xl md:text-5xl font-black text-foreground italic uppercase tracking-tighter mb-12 text-center">
+                The System is <span className="text-red-500">Rigged</span>. <br />Opt <span className="text-primary italic">Out</span>.
               </h2>
+
+              <div className="mb-16">
+                 <WealthErosion />
+              </div>
 
               <div className="space-y-12">
                 {[
                   {
-                    text: "Never spend weeks building ideas without knowing if anyone will pay.",
-                    sub: "AKSHON identifies the demand-signal before you write a single line of code."
+                    text: "Banks create money from nothing. Governments borrow forever. You pay the price.",
+                    sub: "The 'Rigged Triangle' ensures your savings are stolen via inflation before you can spend them."
                   },
                   {
-                    text: "Never overthink features, tech, and tools instead of shipping something small.",
-                    sub: "Our synthesis engine strips back the noise, focusing only on the kinetic core."
+                    text: "Stop playing a game where the rules are written against you.",
+                    sub: "AKSHON gives you the information edge to arbitrate the system, not just survive it."
                   },
                   {
-                    text: "Never watch other micro-SaaS founders win and wonder what you’re missing.",
-                    sub: "Own the information edge. Be the one they wonder about."
+                    text: "True sovereignty means owning assets that cannot be printed away.",
+                    sub: "Use our intelligence matrix to identify value before the currency debasement erodes it."
                   }
                 ].map((item, i) => (
                   <motion.div

@@ -128,7 +128,7 @@ export default function CryptoPayment({ isOpen, onClose, tier, price }: CryptoPa
                                                     Sovereign <span className="text-primary">Settlement</span>
                                                 </h2>
                                                 <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">
-                                                    Tier: {tier} // Amount: {price}
+                                                    Tier: {tier} {"//"} Amount: {price}
                                                 </p>
                                             </div>
                                         </div>
@@ -148,6 +148,20 @@ export default function CryptoPayment({ isOpen, onClose, tier, price }: CryptoPa
                                                     <span className="text-[10px] font-black uppercase tracking-tighter">{net.name}</span>
                                                 </button>
                                             ))}
+                                        </div>
+
+                                        {/* Sovereign Notice */}
+                                        <div className="mb-6 p-4 rounded-xl bg-primary/10 border border-primary/20 flex items-start gap-3">
+                                            <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                                            <div>
+                                                <h4 className="text-[10px] font-black text-white uppercase tracking-widest mb-1">
+                                                    Sovereign Choice Recommended
+                                                </h4>
+                                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                                    By paying in crypto, you opt out of the debt-based fiat system.
+                                                    This transaction is final, censorship-resistant, and supports the parallel economy.
+                                                </p>
+                                            </div>
                                         </div>
 
                                         {/* Settlement Box */}
