@@ -14,7 +14,8 @@ import {
     Shield,
     Wallet,
     Plus,
-    CheckCircle2
+    CheckCircle2,
+    Layers
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -301,6 +302,43 @@ export default function DashboardPage() {
                                         <Share2 className="w-4 h-4 text-primary" />
                                         Contribute to Foundation
                                     </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Dataset Aggregator */}
+                        <Card className="glass border-white/5 hover:border-primary/20 transition-all group">
+                            <CardHeader className="flex flex-row items-center justify-between">
+                                <div>
+                                    <CardTitle className="text-2xl font-black text-white uppercase italic tracking-tighter mb-1">
+                                        Dataset <span className="text-primary italic">Aggregator</span>
+                                    </CardTitle>
+                                    <CardDescription className="italic">
+                                        Access and stream curated training packs via MCP.
+                                    </CardDescription>
+                                </div>
+                                <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                                    <Layers className="w-7 h-7 text-primary" />
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex flex-col md:flex-row gap-6 items-center">
+                                    <div className="flex-1 w-full">
+                                        <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-3 font-bold">Featured Packs</div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {["Finance Q1", "Code Instruct", "Bio-Synth"].map(tag => (
+                                                <span key={tag} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-bold text-white/70 uppercase">
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                            <span className="px-3 py-1.5 text-[10px] text-primary/60 font-medium italic">+12 More</span>
+                                        </div>
+                                    </div>
+                                    <Link href="/datasets" className="w-full md:w-auto">
+                                        <Button className="w-full md:w-auto h-12 px-8 bg-white/5 hover:bg-white/10 text-primary font-bold uppercase tracking-widest text-xs border border-primary/20 hover:border-primary/50 rounded-xl transition-all hover:scale-105">
+                                            Browse Packs
+                                        </Button>
+                                    </Link>
                                 </div>
                             </CardContent>
                         </Card>
