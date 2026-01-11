@@ -106,24 +106,32 @@ export default function GetEdgeJourney({ isOpen, onClose, tier = "Standard" }: G
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="modal-title"
+                    aria-describedby="modal-description"
+                >
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={handleClose}
                         className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                        aria-hidden="true"
                     />
 
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        className="relative w-full max-w-2xl glass border-primary/20 p-8 md:p-12 rounded-[40px] overflow-hidden"
+                        className="relative w-full max-w-2xl glass-chroma border-primary/20 p-8 md:p-12 rounded-[40px] overflow-hidden"
                     >
                         <button
                             onClick={handleClose}
-                            className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors"
+                            className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg focus-visible:ring-2 focus-visible:ring-primary"
+                            aria-label="Close modal"
                         >
                             <X className="w-5 h-5" />
                         </button>
@@ -143,10 +151,10 @@ export default function GetEdgeJourney({ isOpen, onClose, tier = "Standard" }: G
                                             <Zap className="w-6 h-6 text-primary" />
                                         </div>
 
-                                        <h2 className="text-3xl md:text-4xl font-black text-white italic uppercase tracking-tighter mb-4">
+                                        <h2 id="modal-title" className="text-3xl md:text-4xl font-black text-white italic uppercase tracking-tighter mb-4">
                                             Acquire <span className="text-primary">Access</span>
                                         </h2>
-                                        <p className="text-muted-foreground font-light mb-8 italic text-sm">
+                                        <p id="modal-description" className="text-muted-foreground font-light mb-8 italic text-sm">
                                             You are requesting entry to the <span className="text-white font-bold">{tier}</span> tier.
                                             Leave your primary communication channel to receive authentication credentials.
                                         </p>
@@ -156,35 +164,43 @@ export default function GetEdgeJourney({ isOpen, onClose, tier = "Standard" }: G
                                                 initial={{ opacity: 0, y: 10 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 className="p-6 rounded-2xl bg-primary/10 border border-primary/20 text-center"
+                                                role="status"
+                                                aria-live="polite"
                                             >
                                                 <ShieldCheck className="w-12 h-12 text-primary mx-auto mb-4" />
                                                 <h3 className="text-xl font-black text-white italic uppercase mb-2">Signal Received</h3>
-                                                <p className="text-xs text-primary/70 font-bold uppercase tracking-widest">
+                                                <p className="text-xs text-primary font-bold uppercase tracking-widest">
                                                     Initiating Setup Sequence...
                                                 </p>
                                             </motion.div>
                                         ) : (
                                             <form onSubmit={handleEmailSubmit} className="space-y-4">
                                                 <div className="relative">
-                                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                                                    <label htmlFor="email-input" className="sr-only">
+                                                        Email Address
+                                                    </label>
+                                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60 pointer-events-none" aria-hidden="true" />
                                                     <Input
+                                                        id="email-input"
                                                         type="email"
                                                         placeholder="COMM_CHANNEL@DOMAIN.COM"
                                                         required
                                                         value={email}
                                                         onChange={(e) => setEmail(e.target.value)}
-                                                        className="h-14 bg-white/5 border-white/10 rounded-xl pl-12 text-sm text-white placeholder:text-white/20 focus:border-primary/50 transition-colors uppercase font-bold tracking-widest"
+                                                        className="h-14 bg-white/5 border-white/10 rounded-xl pl-12 text-sm text-white placeholder:text-white/40 focus:border-primary/50 transition-colors uppercase font-bold tracking-widest"
+                                                        aria-describedby="email-description"
                                                     />
                                                 </div>
                                                 <Button
                                                     type="submit"
                                                     disabled={status === "loading"}
                                                     className="w-full h-14 rounded-xl bg-primary text-black font-black uppercase tracking-[0.2em] text-xs hover:scale-[1.02] transition-transform shadow-[0_0_30px_rgba(212,175,55,0.2)]"
+                                                    aria-label={status === "loading" ? "Submitting email" : "Submit email to request access"}
                                                 >
                                                     {status === "loading" ? "TRANSMITTING..." : (tier === "Researcher" || tier === "Arbitrageur" ? "Proceed to Payment" : "Initiate Protocol")}
-                                                    <ArrowRight className="ml-2 w-4 h-4" />
+                                                    <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" />
                                                 </Button>
-                                                <p className="text-[9px] text-white/20 text-center uppercase tracking-widest font-black">
+                                                <p id="email-description" className="text-[10px] text-white/60 text-center uppercase tracking-widest font-black">
                                                     SECURE L1 ENCRYPTION ENABLED // NO SPAM POLICY
                                                 </p>
                                             </form>
@@ -212,18 +228,19 @@ export default function GetEdgeJourney({ isOpen, onClose, tier = "Standard" }: G
                                         </p>
 
                                         <div className="relative mb-6">
-                                            <div className="absolute top-2 right-2">
+                                            <div className="absolute top-2 right-2 z-10">
                                                 <Button
                                                     size="sm"
                                                     variant="ghost"
                                                     onClick={() => copyToClipboard(MCP_CONFIG, setCopiedConfig)}
-                                                    className="h-8 text-xs text-white/40 hover:text-white hover:bg-white/10"
+                                                    className="h-10 min-w-[88px] text-xs text-white/70 hover:text-white hover:bg-white/10"
+                                                    aria-label={copiedConfig ? "Configuration copied to clipboard" : "Copy MCP configuration to clipboard"}
                                                 >
-                                                    {copiedConfig ? <Check className="w-3 h-3 mr-1 text-emerald-500" /> : <Copy className="w-3 h-3 mr-1" />}
+                                                    {copiedConfig ? <Check className="w-3 h-3 mr-1 text-emerald-500" aria-hidden="true" /> : <Copy className="w-3 h-3 mr-1" aria-hidden="true" />}
                                                     {copiedConfig ? "Copied" : "Copy JSON"}
                                                 </Button>
                                             </div>
-                                            <pre className="p-4 rounded-xl bg-black/60 border border-white/5 overflow-x-auto h-48 custom-scrollbar">
+                                            <pre className="p-4 rounded-xl bg-black/60 border border-white/5 overflow-x-auto h-48 custom-scrollbar" role="region" aria-label="MCP configuration code">
                                                 <code className="text-xs font-mono text-emerald-400">
                                                     {MCP_CONFIG}
                                                 </code>
@@ -260,18 +277,19 @@ export default function GetEdgeJourney({ isOpen, onClose, tier = "Standard" }: G
                                         </p>
 
                                         <div className="relative mb-6">
-                                            <div className="absolute top-2 right-2">
+                                            <div className="absolute top-2 right-2 z-10">
                                                 <Button
                                                     size="sm"
                                                     variant="ghost"
                                                     onClick={() => copyToClipboard(AKSHON_MD, setCopiedMd)}
-                                                    className="h-8 text-xs text-white/40 hover:text-white hover:bg-white/10"
+                                                    className="h-10 min-w-[120px] text-xs text-white/70 hover:text-white hover:bg-white/10"
+                                                    aria-label={copiedMd ? "Markdown copied to clipboard" : "Copy AKSHON markdown to clipboard"}
                                                 >
-                                                    {copiedMd ? <Check className="w-3 h-3 mr-1 text-emerald-500" /> : <Copy className="w-3 h-3 mr-1" />}
+                                                    {copiedMd ? <Check className="w-3 h-3 mr-1 text-emerald-500" aria-hidden="true" /> : <Copy className="w-3 h-3 mr-1" aria-hidden="true" />}
                                                     {copiedMd ? "Copied" : "Copy Markdown"}
                                                 </Button>
                                             </div>
-                                            <pre className="p-4 rounded-xl bg-black/60 border border-white/5 overflow-x-auto h-48 custom-scrollbar">
+                                            <pre className="p-4 rounded-xl bg-black/60 border border-white/5 overflow-x-auto h-48 custom-scrollbar" role="region" aria-label="AKSHON markdown documentation">
                                                 <code className="text-xs font-mono text-blue-400">
                                                     {AKSHON_MD}
                                                 </code>

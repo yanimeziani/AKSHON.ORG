@@ -34,10 +34,11 @@ export default function Navbar() {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             className="fixed top-0 left-0 right-0 z-50 h-20 border-b border-white/40 glass-chroma"
+            aria-label="Main navigation"
         >
             <div className="container h-full mx-auto px-4 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded bg-primary flex items-center justify-center font-black text-primary-foreground text-xl shadow-lg">
+                <Link href="/" className="flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary rounded-lg p-1 -m-1" aria-label="Akshon home">
+                    <div className="w-8 h-8 rounded bg-primary flex items-center justify-center font-black text-primary-foreground text-xl shadow-lg" aria-hidden="true">
                         A
                     </div>
                     <span className="text-xl font-black tracking-tighter text-foreground uppercase italic">
@@ -77,7 +78,8 @@ export default function Navbar() {
                             <Button
                                 onClick={handleSignOut}
                                 variant="ghost"
-                                className="hidden sm:inline-flex text-muted-foreground/60 font-bold hover:text-destructive uppercase tracking-widest text-[9px]"
+                                className="hidden sm:inline-flex text-muted-foreground font-bold hover:text-destructive uppercase tracking-widest text-[10px] min-h-[44px]"
+                                aria-label="Sign out of your account"
                             >
                                 Sign Out
                             </Button>

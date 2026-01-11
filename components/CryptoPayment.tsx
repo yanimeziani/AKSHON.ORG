@@ -79,7 +79,7 @@ export default function CryptoPayment({ isOpen, onClose, tier, price }: CryptoPa
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="relative w-full max-w-2xl glass border-primary/20 p-8 md:p-12 rounded-[32px] overflow-hidden"
+                        className="relative w-full max-w-2xl glass-chroma border-primary/20 p-8 md:p-12 rounded-[32px] overflow-hidden"
                     >
                         <button
                             onClick={onClose}
