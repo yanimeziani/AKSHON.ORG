@@ -15,48 +15,75 @@ export class MultiModalController {
             mouse: { x: 0, y: 0, down: false }
         };
 
-        this.prevHandPos = {
-            left: { x: 0.5, y: 0.5 },
-            right: { x: 0.5, y: 0.5 }
-        };
-
+        this.prevHandPos = { left: { x: 0.5, y: 0.5 }, right: { x: 0.5, y: 0.5 } };
         this.smoothState = {
             left: { x: 0.5, y: 0.5, z: 0, spread: 0 },
             right: { x: 0.5, y: 0.5, z: 0, spread: 0 },
             head: { x: 0.5, y: 0.5 }
         };
-        this.smoothingFactor = 0.1; // Maximum biomimetic fluidity
+        this.smoothingFactor = 0.12;
+
+        this.audioCtx = null;
+        this.oscillator = null;
+        this.gainNode = null;
 
         this.initKeyboard();
         this.initMouse();
         this.initVoice();
     }
 
+    // BIOMIMETIC AUDIO COHERENCE
+    initAudioSynth() {
+        if (this.audioCtx) return;
+        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        this.oscillator = this.audioCtx.createOscillator();
+        this.gainNode = this.audioCtx.createGain();
+
+        this.oscillator.type = 'sine';
+        this.oscillator.frequency.setValueAtTime(440, this.audioCtx.currentTime);
+        this.gainNode.gain.setValueAtTime(0, this.audioCtx.currentTime);
+
+        this.oscillator.connect(this.gainNode);
+        this.gainNode.connect(this.audioCtx.destination);
+        this.oscillator.start();
+    }
+
+    updateAudioCoherence(intensity, frequency) {
+        if (!this.oscillator) return;
+        // Map frequency to biomimetic scale (Harmonic Resonance)
+        const targetFreq = 100 + frequency * 400;
+        this.oscillator.frequency.setTargetAtTime(targetFreq, this.audioCtx.currentTime, 0.1);
+        // Intensity linked to spread and velocity
+        const targetGain = Math.min(0.2, intensity * 0.1);
+        this.gainNode.gain.setTargetAtTime(targetGain, this.audioCtx.currentTime, 0.1);
+    }
+
     initKeyboard() {
-        window.addEventListener('keydown', (e) => { this.state.keys[e.key] = true; this.onKeyUpdate(this.state.keys); });
+        window.addEventListener('keydown', (e) => {
+            this.state.keys[e.key] = true;
+            if (!this.audioCtx) this.initAudioSynth();
+            this.onKeyUpdate(this.state.keys);
+        });
         window.addEventListener('keyup', (e) => { this.state.keys[e.key] = false; this.onKeyUpdate(this.state.keys); });
     }
 
     initMouse() {
-        window.addEventListener('mousemove', (e) => {
-            this.state.mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-            this.state.mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-            this.onMouseUpdate(this.state.mouse);
+        window.addEventListener('mousedown', () => {
+            if (!this.audioCtx) this.initAudioSynth();
+            this.state.mouse.down = true;
         });
-        window.addEventListener('mousedown', () => { this.state.mouse.down = true; });
         window.addEventListener('mouseup', () => { this.state.mouse.down = false; });
     }
 
     async initVoice() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const analyser = audioContext.createAnalyser();
-            const source = audioContext.createMediaStreamSource(stream);
+            const vCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const analyser = vCtx.createAnalyser();
+            const source = vCtx.createMediaStreamSource(stream);
             source.connect(analyser);
             analyser.fftSize = 128;
             const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
             const updateVoice = () => {
                 analyser.getByteFrequencyData(dataArray);
                 let sum = 0;
@@ -66,69 +93,34 @@ export class MultiModalController {
                 requestAnimationFrame(updateVoice);
             };
             updateVoice();
-        } catch (e) {
-            console.warn("Voice inactive");
-        }
+        } catch (e) { console.warn("Mic off"); }
     }
 
     calculateSpread(landmarks) {
-        // Distance between thumb tip (4) and pinky tip (20)
-        const thumbTip = landmarks[4];
-        const pinkyTip = landmarks[20];
-        const dist = Math.sqrt(
-            Math.pow(thumbTip.x - pinkyTip.x, 2) +
-            Math.pow(thumbTip.y - pinkyTip.y, 2)
-        );
-        // Normalize by distance between wrist and middle finger base for scale invariance
-        const wrist = landmarks[0];
-        const middleBase = landmarks[9];
-        const scale = Math.sqrt(Math.pow(wrist.x - middleBase.x, 2) + Math.pow(wrist.y - middleBase.y, 2));
-        return dist / (scale * 2); // 0 to 1 approximate
+        const thumb = landmarks[4], pinky = landmarks[20], wrist = landmarks[0], mid = landmarks[9];
+        const dist = Math.sqrt(Math.pow(thumb.x - pinky.x, 2) + Math.pow(thumb.y - pinky.y, 2));
+        const scale = Math.sqrt(Math.pow(wrist.x - mid.x, 2) + Math.pow(wrist.y - mid.y, 2));
+        return dist / (scale * 2);
     }
 
     drawChakra(ctx, x, y, hue, label, intensity) {
         const color = `hsla(${hue}, 80%, 60%, 1)`;
-        const r = 10 + intensity * 20 + Math.sin(Date.now() * 0.005) * 5;
-
-        const grad = ctx.createRadialGradient(x, y, 0, x, y, r * 3);
-        grad.addColorStop(0, color);
-        grad.addColorStop(0.3, color.replace('1)', '0.4)'));
-        grad.addColorStop(1, 'rgba(0,0,0,0)');
-
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(x, y, r * 3, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = `hsla(${hue}, 100%, 80%, 0.8)`;
-        ctx.lineWidth = 1 + intensity * 3;
+        const r = 10 + intensity * 25;
+        ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.globalAlpha = 0.3;
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
         ctx.stroke();
-
-        // Wave Spectrum Coherence Lines
-        if (intensity > 0.5) {
-            ctx.beginPath();
-            ctx.moveTo(x - r * 2, y);
-            ctx.lineTo(x + r * 2, y);
-            ctx.stroke();
-        }
     }
 
     async initHands(videoElement, canvasElement) {
         if (typeof Hands === 'undefined') return;
-
-        const hands = new Hands({
-            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-        });
-
-        hands.setOptions({
-            maxNumHands: 2,
-            modelComplexity: 0,
-            minDetectionConfidence: 0.5,
-            minTrackingConfidence: 0.5
-        });
-
+        const hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
+        hands.setOptions({ maxNumHands: 2, modelComplexity: 0, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
         const canvasCtx = canvasElement.getContext('2d');
         let isProcessing = false;
 
@@ -142,62 +134,43 @@ export class MultiModalController {
 
             this.state.leftHand.active = false;
             this.state.rightHand.active = false;
-            this.state.head.active = false;
 
             if (results.multiHandLandmarks && results.multiHandedness) {
-                let avgX = 0, avgY = 0;
-
+                let totalIntensity = 0;
                 for (let i = 0; i < results.multiHandLandmarks.length; i++) {
                     const landmarks = results.multiHandLandmarks[i];
                     const label = results.multiHandedness[i].label;
                     const palm = landmarks[9];
-
                     const target = label === 'Left' ? this.state.leftHand : this.state.rightHand;
                     const smooth = label === 'Left' ? this.smoothState.left : this.smoothState.right;
                     const prev = label === 'Left' ? this.prevHandPos.left : this.prevHandPos.right;
 
-                    // Update Smooth State
                     smooth.x += (palm.x - smooth.x) * this.smoothingFactor;
                     smooth.y += (palm.y - smooth.y) * this.smoothingFactor;
                     smooth.z += (palm.z - smooth.z) * this.smoothingFactor;
 
-                    const currentSpread = this.calculateSpread(landmarks);
-                    smooth.spread += (currentSpread - smooth.spread) * this.smoothingFactor;
+                    const spr = this.calculateSpread(landmarks);
+                    smooth.spread += (spr - smooth.spread) * this.smoothingFactor;
 
-                    // Movement Velocity Coherence
-                    const dx = smooth.x - prev.x;
-                    const dy = smooth.y - prev.y;
-                    target.velocity = Math.sqrt(dx * dx + dy * dy) * 50;
-                    prev.x = smooth.x;
-                    prev.y = smooth.y;
-
-                    target.x = smooth.x;
-                    target.y = smooth.y;
-                    target.z = smooth.z;
-                    target.spread = smooth.spread;
+                    target.velocity = Math.sqrt(Math.pow(smooth.x - prev.x, 2) + Math.pow(smooth.y - prev.y, 2)) * 60;
+                    prev.x = smooth.x; prev.y = smooth.y;
+                    target.x = smooth.x; target.y = smooth.y; target.z = smooth.z; target.spread = smooth.spread;
                     target.active = true;
+                    target.hue = (smooth.x * 150) + (smooth.y * 150) + (this.state.voiceLevel * 60);
 
-                    // Color Spectrum Mapping (Biomimetic HSL)
-                    // Map X/Y position to visible spectrum (0-360 hue)
-                    target.hue = (smooth.x * 120) + (smooth.y * 120) + (this.state.voiceLevel * 120);
-
-                    avgX += palm.x;
-                    avgY += palm.y;
-
+                    totalIntensity += (target.velocity + target.spread);
                     this.drawChakra(canvasCtx, palm.x * canvasElement.width, palm.y * canvasElement.height, target.hue, label, target.spread);
                 }
 
-                // Head Resonance (Crown)
+                // Update Global Audio Coherence
                 if (results.multiHandLandmarks.length > 0) {
-                    this.state.head.x = avgX / results.multiHandLandmarks.length;
-                    this.state.head.y = (avgY / results.multiHandLandmarks.length) - 0.2;
-                    this.state.head.active = true;
-                    this.drawChakra(canvasCtx, this.state.head.x * canvasElement.width, this.state.head.y * canvasElement.height, 280, 'CROWN', this.state.voiceLevel);
+                    this.updateAudioCoherence(totalIntensity, this.state.rightHand.x);
+                } else {
+                    this.updateAudioCoherence(0, 0.5);
                 }
             }
             canvasCtx.restore();
             this.onHandUpdate(this.state.leftHand, this.state.rightHand);
-            if (this.state.head.active) this.onHeadUpdate(this.state.head);
         });
 
         const startCamera = () => {
@@ -213,14 +186,8 @@ export class MultiModalController {
         };
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: { width: 320, height: 240, frameRate: 60 }
-            });
-            videoElement.srcObject = stream;
-            videoElement.play();
-            startCamera();
-        } catch (e) {
-            console.error("Camera fail");
-        }
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240, frameRate: 60 } });
+            videoElement.srcObject = stream; videoElement.play(); startCamera();
+        } catch (e) { console.error("Cam fail"); }
     }
 }

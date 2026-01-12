@@ -5,6 +5,9 @@ export type HandState = {
     y: number;
     z: number;
     active: boolean;
+    hue: number;
+    spread: number;
+    velocity: number;
 };
 
 export type HeadState = {
@@ -53,8 +56,8 @@ export class MultiModalController {
         this.onHeadUpdate = options.onHeadUpdate || (() => { });
 
         this.state = {
-            leftHand: { x: 0.5, y: 0.5, z: 0.5, active: false },
-            rightHand: { x: 0.5, y: 0.5, z: 0.5, active: false },
+            leftHand: { x: 0.5, y: 0.5, z: 0.5, active: false, hue: 140, spread: 0, velocity: 0 },
+            rightHand: { x: 0.5, y: 0.5, z: 0.5, active: false, hue: 30, spread: 0, velocity: 0 },
             head: { x: 0.5, y: 0.5, active: false },
             voiceLevel: 0,
             keys: {},
@@ -194,6 +197,11 @@ export class MultiModalController {
                     const target = label === 'Left' ? this.state.leftHand : this.state.rightHand;
                     const smooth = label === 'Left' ? this.smoothState.left : this.smoothState.right;
 
+                    // Calculate Velocity
+                    const dx = palm.x - smooth.x;
+                    const dy = palm.y - smooth.y;
+                    target.velocity = Math.sqrt(dx * dx + dy * dy) * 10;
+
                     smooth.x += (palm.x - smooth.x) * this.smoothingFactor;
                     smooth.y += (palm.y - smooth.y) * this.smoothingFactor;
                     smooth.z += (palm.z - smooth.z) * this.smoothingFactor;
@@ -202,6 +210,16 @@ export class MultiModalController {
                     target.y = smooth.y;
                     target.z = smooth.z;
                     target.active = true;
+
+                    // Calculate Hue (based on X position)
+                    target.hue = label === 'Left' ? 140 + (target.x * 40) : 30 + (target.x * 40);
+
+                    // Calculate Spread (distance between thumb tip and pinky tip)
+                    const thumb = landmarks[4];
+                    const pinky = landmarks[20];
+                    const dSx = thumb.x - pinky.x;
+                    const dSy = thumb.y - pinky.y;
+                    target.spread = Math.sqrt(dSx * dSx + dSy * dSy) * 2;
 
                     avgX += palm.x;
                     avgY += palm.y;
