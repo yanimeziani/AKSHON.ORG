@@ -2,55 +2,88 @@
 
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-import { Check, Zap, Shield, Crown, HelpCircle, Wallet } from "lucide-react";
-import { useState } from "react";
+import { Check, Zap, Shield, Crown, HelpCircle, Wallet, CreditCard, Loader2 } from "lucide-react";
+import { useState, useEffect, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import GetEdgeJourney from "@/components/GetEdgeJourney";
 import CryptoPayment from "@/components/CryptoPayment";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export default function PricingPage() {
+function PricingContent() {
     const [billingCycle, setBillingCycle] = useState<"monthly" | "annually">("annually");
     const [isCaptureOpen, setIsCaptureOpen] = useState(false);
     const [isCryptoOpen, setIsCryptoOpen] = useState(false);
     const [selectedTier, setSelectedTier] = useState("Standard");
     const [selectedPrice, setSelectedPrice] = useState("");
+    const [user, setUser] = useState<User | null>(null);
+    const [isCheckingOut, setIsCheckingOut] = useState<string | null>(null);
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
+        });
+        return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
+        // Handle return from Stripe
+        if (searchParams.get('success') === 'true') {
+            // Show success message
+            router.replace('/dashboard?success=true');
+        }
+        if (searchParams.get('canceled') === 'true') {
+            // Show canceled message
+            alert('Payment was canceled.');
+        }
+    }, [searchParams, router]);
 
     const handleAcquire = async (tier: string) => {
-        if (tier === "Researcher" || tier === "Arbitrageur") {
-            try {
-                // Call Stripe API
-                const res = await fetch('/api/stripe/checkout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ tier, billingCycle }),
-                });
-
-                const { sessionId, error } = await res.json();
-
-                if (error) {
-                    console.error("Stripe Error:", error);
-                    // Fallback to capture if stripe fails or display error
-                    setSelectedTier(tier);
-                    setIsCaptureOpen(true);
-                    return;
-                }
-
-                // Redirect to Stripe Checkout
-                const stripe = await import('@stripe/stripe-js').then(m => m.loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''));
-                if (stripe) {
-                    // @ts-ignore
-                    await stripe.redirectToCheckout({ sessionId });
-                }
-            } catch (err) {
-                console.error("Payment initiation failed", err);
-                setSelectedTier(tier);
-                setIsCaptureOpen(true);
-            }
-        } else {
+        // If not logged in, show lead capture
+        if (!user) {
             setSelectedTier(tier);
             setIsCaptureOpen(true);
+            return;
+        }
+
+        // For Sovereign tier, always show contact form
+        if (tier === "Sovereign") {
+            setSelectedTier(tier);
+            setIsCaptureOpen(true);
+            return;
+        }
+
+        // For paid tiers, initiate Stripe checkout
+        setIsCheckingOut(tier);
+        try {
+            const res = await fetch('/api/stripe/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tier,
+                    billingCycle,
+                    userId: user.uid,
+                    userEmail: user.email,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || 'Checkout failed');
+            }
+
+            if (data.url) {
+                window.location.href = data.url;
+            }
+        } catch (error: any) {
+            console.error('Checkout error:', error);
+            alert(error.message || 'Failed to start checkout. Please try again.');
+        } finally {
+            setIsCheckingOut(null);
         }
     };
 
@@ -234,12 +267,20 @@ export default function PricingPage() {
                             <div className="flex flex-col gap-3 mt-auto">
                                 <Button
                                     onClick={() => handleAcquire(tier.name)}
+                                    disabled={isCheckingOut === tier.name}
                                     className={`w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs transition-all ${tier.popular
                                         ? "bg-white text-black hover:bg-white/90"
                                         : "bg-white/5 text-white hover:bg-white/10 border border-white/5"
                                         }`}
                                 >
-                                    {tier.cta}
+                                    {isCheckingOut === tier.name ? (
+                                        <span className="flex items-center gap-2">
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                            Processing...
+                                        </span>
+                                    ) : (
+                                        tier.cta
+                                    )}
                                 </Button>
                                 {tier.price !== "Custom" && (
                                     <Button
@@ -296,5 +337,17 @@ export default function PricingPage() {
                 price={selectedPrice}
             />
         </main>
+    );
+}
+
+export default function PricingPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+        }>
+            <PricingContent />
+        </Suspense>
     );
 }

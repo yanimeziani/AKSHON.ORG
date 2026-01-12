@@ -15,7 +15,8 @@ import {
     Wallet,
     Plus,
     CheckCircle2,
-    Layers
+    Layers,
+    Key
 } from "lucide-react";
 import { useState, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
@@ -281,6 +282,41 @@ function DashboardContent() {
                                         <Button variant="outline" className="w-full border-white/10 hover:bg-white/5 text-primary font-bold uppercase tracking-widest text-xs h-10 rounded-xl">
                                             View Full Report
                                         </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            {/* API Keys Card */}
+                            <Card className="glass border-white/5 hover:border-primary/20 transition-all group overflow-hidden">
+                                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                                    <Key className="w-24 h-24" />
+                                </div>
+                                <CardHeader>
+                                    <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
+                                        <Key className="text-primary w-6 h-6" />
+                                    </div>
+                                    <CardTitle className="text-2xl font-black text-white uppercase italic tracking-tighter">
+                                        API Keys
+                                    </CardTitle>
+                                    <CardDescription className="italic">
+                                        Connect any IDE, terminal, or AI agent.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/60">
+                                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                        Works with VS Code, Cursor, CLI
+                                    </div>
+                                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/60">
+                                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                        Full REST API Access
+                                    </div>
+                                    <div className="pt-4">
+                                        <Link href="/keys">
+                                            <Button className="w-full bg-primary text-black font-bold uppercase tracking-widest text-xs h-12 rounded-xl hover:scale-[1.02] transition-transform">
+                                                Manage API Keys
+                                            </Button>
+                                        </Link>
                                     </div>
                                 </CardContent>
                             </Card>

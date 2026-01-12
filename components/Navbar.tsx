@@ -47,7 +47,7 @@ export default function Navbar() {
                 </Link>
 
                 <div className="hidden md:flex items-center gap-8">
-                    {["Corpus", "Datasets", "Pricing"].map((item) => (
+                    {["Corpus", "Demos", "Datasets", "Pricing"].map((item) => (
                         <Link
                             key={item}
                             href={`/${item.toLowerCase()}`}
@@ -70,6 +70,11 @@ export default function Navbar() {
                     </a>
                     {user ? (
                         <div className="flex items-center gap-2">
+                            <Link href="/keys">
+                                <Button variant="ghost" className="hidden sm:inline-flex text-muted-foreground font-bold hover:text-primary uppercase tracking-widest text-xs">
+                                    API Keys
+                                </Button>
+                            </Link>
                             <Link href="/dashboard">
                                 <Button variant="ghost" className="hidden sm:inline-flex text-muted-foreground font-bold hover:text-foreground uppercase tracking-widest text-xs">
                                     Dashboard

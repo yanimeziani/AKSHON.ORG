@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sungrid // Kyber Stream Interface</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        #ui-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #ffaa00;
+            /* Sungrid Gold */
+            z-index: 10;
+        }
+
+        .hud-panel {
+            border: 1px solid rgba(255, 170, 0, 0.3);
+            background: rgba(20, 10, 0, 0.7);
+            padding: 15px;
+            backdrop-filter: blur(5px);
+            max-width: 320px;
+            margin-bottom: 10px;
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+            border-bottom: 1px solid rgba(255, 170, 0, 0.3);
+            padding-bottom: 5px;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .stat span:last-child {
+            color: #00ffff;
+        }
+
+        /* Cyan for values */
+
+        .stream-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #00ff00;
+            border-radius: 50%;
+            margin-right: 5px;
+            box-shadow: 0 0 5px #00ff00;
+        }
+
+        #webcam-container {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 240px;
+            height: 180px;
+            border: 2px solid #ffaa00;
+            z-index: 20;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #input-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+            display: none;
+        }
+
+        #output-canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffaa00;
+            font-size: 20px;
+            letter-spacing: 5px;
+            text-align: center;
+            z-index: 100;
+            text-shadow: 0 0 10px #ffaa00;
+        }
+
+        .connection-line {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            text-align: right;
+            font-size: 10px;
+            color: #444;
+        }
+    </style>
+    <!-- MediaPipe Hands -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div id="loading">INITIALIZING KYBER STREAM<br><span style="font-size:12px">ESTABLISHING UPLINK...</span></div>
+
+    <div id="canvas-container"></div>
+
+    <div id="webcam-container">
+        <video id="input-video" playsinline></video>
+        <canvas id="output-canvas"></canvas>
+    </div>
+
+    <div id="ui-layer">
+        <!-- Top Left: Control Info -->
+        <div class="hud-panel">
+            <h1>SUNGRID OS [v2.5]</h1>
+            <div class="stat"><span>PROTOCOL</span><span id="stream-status">
+                    <div class="stream-indicator"></div>KYBER_Active
+                </span></div>
+            <div class="stat"><span>LATENCY</span><span>
+                    < 5ms</span>
+            </div>
+            <div class="stat"><span>INPUTS</span><span style="color: #ffaa00;">HAND+VOICE+KB+MS</span></div>
+            <div class="stat"><span>VOICE_LVL</span><span id="voice-lvl">0.00</span></div>
+            <div class="stat"><span>DATA_INGEST</span><span id="data-count">INIT...</span></div>
+        </div>
+        <div class="stat" style="margin-top: 10px; border-top: 1px solid rgba(255, 170, 0, 0.3); padding-top: 5px;">
+            <span>WEBCAM_UPLINK</span>
+            <span id="btn-webcam-toggle"
+                style="cursor: pointer; border: 1px solid #ffaa00; padding: 0 5px; background: rgba(255, 170, 0, 0.2);">[DISABLE]</span>
+        </div>
+    </div>
+
+    <!-- Top Right: Hand Tracking Debug -->
+    <div class="hud-panel" style="position: absolute; top: 20px; right: 20px;">
+        <h1>PARALLEL CONTROL</h1>
+        <div class="stat"><span>L_HAND (NAV)</span><span id="l-pos">WAITING...</span></div>
+        <div class="stat"><span>R_HAND (DEPTH)</span><span id="r-pos">WAITING...</span></div>
+    </div>
+
+    <div class="connection-line">
+        SECURE CONNECTION // ENCRYPTED // 2048-BIT
+    </div>
+    </div>
+
+    <!-- Import Map -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module" src="./app.js"></script>
+</body>
+
+</html>

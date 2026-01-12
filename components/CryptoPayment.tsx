@@ -16,7 +16,7 @@ interface CryptoPaymentProps {
     price: string;
 }
 
-const WALLET_ADDRESS = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"; // Replace with real treasury address
+const WALLET_ADDRESS = process.env.NEXT_PUBLIC_TREASURY_WALLET_ADDRESS || "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
 const NETWORKS = [
     { name: "Base", icon: Globe, coin: "USDC", color: "#0052FF" },
     { name: "Arbitrum", icon: Globe, coin: "USDC", color: "#28A0F0" },
