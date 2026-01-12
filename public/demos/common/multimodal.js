@@ -7,20 +7,25 @@ export class MultiModalController {
         this.onHeadUpdate = options.onHeadUpdate || (() => { });
 
         this.state = {
-            leftHand: { x: 0.5, y: 0.5, z: 0.5, active: false },
-            rightHand: { x: 0.5, y: 0.5, z: 0.5, active: false },
+            leftHand: { x: 0.5, y: 0.5, z: 0, spread: 0, velocity: 0, active: false, hue: 0 },
+            rightHand: { x: 0.5, y: 0.5, z: 0, spread: 0, velocity: 0, active: false, hue: 0 },
             head: { x: 0.5, y: 0.5, active: false },
             voiceLevel: 0,
             keys: {},
             mouse: { x: 0, y: 0, down: false }
         };
 
+        this.prevHandPos = {
+            left: { x: 0.5, y: 0.5 },
+            right: { x: 0.5, y: 0.5 }
+        };
+
         this.smoothState = {
-            left: { x: 0.5, y: 0.5, z: 0.5 },
-            right: { x: 0.5, y: 0.5, z: 0.5 },
+            left: { x: 0.5, y: 0.5, z: 0, spread: 0 },
+            right: { x: 0.5, y: 0.5, z: 0, spread: 0 },
             head: { x: 0.5, y: 0.5 }
         };
-        this.smoothingFactor = 0.12; // Ultra-smooth for flight protocol
+        this.smoothingFactor = 0.1; // Maximum biomimetic fluidity
 
         this.initKeyboard();
         this.initMouse();
@@ -28,14 +33,8 @@ export class MultiModalController {
     }
 
     initKeyboard() {
-        window.addEventListener('keydown', (e) => {
-            this.state.keys[e.key] = true;
-            this.onKeyUpdate(this.state.keys);
-        });
-        window.addEventListener('keyup', (e) => {
-            this.state.keys[e.key] = false;
-            this.onKeyUpdate(this.state.keys);
-        });
+        window.addEventListener('keydown', (e) => { this.state.keys[e.key] = true; this.onKeyUpdate(this.state.keys); });
+        window.addEventListener('keyup', (e) => { this.state.keys[e.key] = false; this.onKeyUpdate(this.state.keys); });
     }
 
     initMouse() {
@@ -68,33 +67,52 @@ export class MultiModalController {
             };
             updateVoice();
         } catch (e) {
-            console.warn("Voice input not available", e);
+            console.warn("Voice inactive");
         }
     }
 
-    drawChakra(ctx, x, y, color, label) {
-        // Aesthetic Chakra Glow
-        const r = 15 + Math.sin(Date.now() * 0.01) * 5;
-        const grad = ctx.createRadialGradient(x, y, 0, x, y, r * 2);
+    calculateSpread(landmarks) {
+        // Distance between thumb tip (4) and pinky tip (20)
+        const thumbTip = landmarks[4];
+        const pinkyTip = landmarks[20];
+        const dist = Math.sqrt(
+            Math.pow(thumbTip.x - pinkyTip.x, 2) +
+            Math.pow(thumbTip.y - pinkyTip.y, 2)
+        );
+        // Normalize by distance between wrist and middle finger base for scale invariance
+        const wrist = landmarks[0];
+        const middleBase = landmarks[9];
+        const scale = Math.sqrt(Math.pow(wrist.x - middleBase.x, 2) + Math.pow(wrist.y - middleBase.y, 2));
+        return dist / (scale * 2); // 0 to 1 approximate
+    }
+
+    drawChakra(ctx, x, y, hue, label, intensity) {
+        const color = `hsla(${hue}, 80%, 60%, 1)`;
+        const r = 10 + intensity * 20 + Math.sin(Date.now() * 0.005) * 5;
+
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, r * 3);
         grad.addColorStop(0, color);
-        grad.addColorStop(0.5, color.replace('1)', '0.3)'));
+        grad.addColorStop(0.3, color.replace('1)', '0.4)'));
         grad.addColorStop(1, 'rgba(0,0,0,0)');
 
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(x, y, r * 2, 0, Math.PI * 2);
+        ctx.arc(x, y, r * 3, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = `hsla(${hue}, 100%, 80%, 0.8)`;
+        ctx.lineWidth = 1 + intensity * 3;
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.stroke();
 
-        ctx.fillStyle = '#fff';
-        ctx.font = '8px Courier New';
-        ctx.textAlign = 'center';
-        ctx.fillText(label, x, y + r + 15);
+        // Wave Spectrum Coherence Lines
+        if (intensity > 0.5) {
+            ctx.beginPath();
+            ctx.moveTo(x - r * 2, y);
+            ctx.lineTo(x + r * 2, y);
+            ctx.stroke();
+        }
     }
 
     async initHands(videoElement, canvasElement) {
@@ -107,8 +125,8 @@ export class MultiModalController {
         hands.setOptions({
             maxNumHands: 2,
             modelComplexity: 0,
-            minDetectionConfidence: 0.4,
-            minTrackingConfidence: 0.4
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
         });
 
         const canvasCtx = canvasElement.getContext('2d');
@@ -116,12 +134,9 @@ export class MultiModalController {
 
         hands.onResults((results) => {
             isProcessing = false;
-
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-
-            // Subtle video background
-            canvasCtx.globalAlpha = 0.3;
+            canvasCtx.globalAlpha = 0.2;
             canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
             canvasCtx.globalAlpha = 1.0;
 
@@ -135,44 +150,52 @@ export class MultiModalController {
                 for (let i = 0; i < results.multiHandLandmarks.length; i++) {
                     const landmarks = results.multiHandLandmarks[i];
                     const label = results.multiHandedness[i].label;
-                    const palm = landmarks[9]; // Middle finger MCP as palm/chakra center
+                    const palm = landmarks[9];
 
                     const target = label === 'Left' ? this.state.leftHand : this.state.rightHand;
                     const smooth = label === 'Left' ? this.smoothState.left : this.smoothState.right;
+                    const prev = label === 'Left' ? this.prevHandPos.left : this.prevHandPos.right;
 
+                    // Update Smooth State
                     smooth.x += (palm.x - smooth.x) * this.smoothingFactor;
                     smooth.y += (palm.y - smooth.y) * this.smoothingFactor;
                     smooth.z += (palm.z - smooth.z) * this.smoothingFactor;
 
+                    const currentSpread = this.calculateSpread(landmarks);
+                    smooth.spread += (currentSpread - smooth.spread) * this.smoothingFactor;
+
+                    // Movement Velocity Coherence
+                    const dx = smooth.x - prev.x;
+                    const dy = smooth.y - prev.y;
+                    target.velocity = Math.sqrt(dx * dx + dy * dy) * 50;
+                    prev.x = smooth.x;
+                    prev.y = smooth.y;
+
                     target.x = smooth.x;
                     target.y = smooth.y;
                     target.z = smooth.z;
+                    target.spread = smooth.spread;
                     target.active = true;
+
+                    // Color Spectrum Mapping (Biomimetic HSL)
+                    // Map X/Y position to visible spectrum (0-360 hue)
+                    target.hue = (smooth.x * 120) + (smooth.y * 120) + (this.state.voiceLevel * 120);
 
                     avgX += palm.x;
                     avgY += palm.y;
 
-                    // Draw Palm Chakras (2 of 5)
-                    const color = label === 'Left' ? 'rgba(255, 170, 0, 1)' : 'rgba(0, 255, 255, 1)';
-                    this.drawChakra(canvasCtx, palm.x * canvasElement.width, palm.y * canvasElement.height, color, `CHAKRA_${label.toUpperCase()}_PALM`);
+                    this.drawChakra(canvasCtx, palm.x * canvasElement.width, palm.y * canvasElement.height, target.hue, label, target.spread);
                 }
 
-                // Head Chakra (3 of 5) - Crown/Sahasrara
+                // Head Resonance (Crown)
                 if (results.multiHandLandmarks.length > 0) {
                     this.state.head.x = avgX / results.multiHandLandmarks.length;
-                    this.state.head.y = (avgY / results.multiHandLandmarks.length) - 0.2; // Offset for crown
+                    this.state.head.y = (avgY / results.multiHandLandmarks.length) - 0.2;
                     this.state.head.active = true;
-
-                    this.drawChakra(canvasCtx, this.state.head.x * canvasElement.width, this.state.head.y * canvasElement.height, 'rgba(255, 0, 255, 1)', 'CHAKRA_CROWN');
-
-                    // Root/Base placeholders to complete 5 chakras (Ayurvedic extremities: Head, Hands, Feet)
-                    // Visualized as projected resonance points at the bottom
-                    this.drawChakra(canvasCtx, 0.2 * canvasElement.width, 0.9 * canvasElement.height, 'rgba(255, 50, 50, 0.5)', 'CHAKRA_FOOT_L (SYNC)');
-                    this.drawChakra(canvasCtx, 0.8 * canvasElement.width, 0.9 * canvasElement.height, 'rgba(255, 50, 50, 0.5)', 'CHAKRA_FOOT_R (SYNC)');
+                    this.drawChakra(canvasCtx, this.state.head.x * canvasElement.width, this.state.head.y * canvasElement.height, 280, 'CROWN', this.state.voiceLevel);
                 }
             }
             canvasCtx.restore();
-
             this.onHandUpdate(this.state.leftHand, this.state.rightHand);
             if (this.state.head.active) this.onHeadUpdate(this.state.head);
         });
@@ -183,26 +206,21 @@ export class MultiModalController {
                     isProcessing = true;
                     hands.send({ image: videoElement });
                 }
-                if (videoElement.requestVideoFrameCallback) {
-                    videoElement.requestVideoFrameCallback(processFrame);
-                } else {
-                    requestAnimationFrame(processFrame);
-                }
+                if (videoElement.requestVideoFrameCallback) videoElement.requestVideoFrameCallback(processFrame);
+                else requestAnimationFrame(processFrame);
             };
             processFrame();
         };
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: { width: { ideal: 320 }, height: { ideal: 240 }, frameRate: { ideal: 60 } }
+                video: { width: 320, height: 240, frameRate: 60 }
             });
             videoElement.srcObject = stream;
-            videoElement.onloadedmetadata = () => {
-                videoElement.play();
-                startCamera();
-            };
+            videoElement.play();
+            startCamera();
         } catch (e) {
-            console.error("Camera failed", e);
+            console.error("Camera fail");
         }
     }
 }
