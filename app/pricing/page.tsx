@@ -5,16 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Check, Zap, Shield, Crown, HelpCircle, Wallet, CreditCard, Loader2 } from "lucide-react";
 import { useState, useEffect, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import GetEdgeJourney from "@/components/GetEdgeJourney";
-import CryptoPayment from "@/components/CryptoPayment";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
+import dynamic from "next/dynamic";
+
+const GetEdgeJourney = dynamic(() => import("@/components/GetEdgeJourney"), {
+    ssr: false,
+});
+const CryptoPayment = dynamic(() => import("@/components/CryptoPayment"), {
+    ssr: false,
+});
 import { useRouter, useSearchParams } from "next/navigation";
 
 function PricingContent() {
     const [billingCycle, setBillingCycle] = useState<"monthly" | "annually">("annually");
     const [isCaptureOpen, setIsCaptureOpen] = useState(false);
+    const [hasCaptureOpened, setHasCaptureOpened] = useState(false);
     const [isCryptoOpen, setIsCryptoOpen] = useState(false);
+    const [hasCryptoOpened, setHasCryptoOpened] = useState(false);
     const [selectedTier, setSelectedTier] = useState("Standard");
     const [selectedPrice, setSelectedPrice] = useState("");
     const [user, setUser] = useState<User | null>(null);
@@ -46,6 +54,7 @@ function PricingContent() {
         if (!user) {
             setSelectedTier(tier);
             setIsCaptureOpen(true);
+            setHasCaptureOpened(true);
             return;
         }
 
@@ -53,6 +62,7 @@ function PricingContent() {
         if (tier === "Sovereign") {
             setSelectedTier(tier);
             setIsCaptureOpen(true);
+            setHasCaptureOpened(true);
             return;
         }
 
@@ -91,6 +101,7 @@ function PricingContent() {
         setSelectedTier(tier);
         setSelectedPrice(price);
         setIsCryptoOpen(true);
+        setHasCryptoOpened(true);
     };
 
     const tiers = [
@@ -324,18 +335,22 @@ function PricingContent() {
                 </section>
             </div>
 
-            <GetEdgeJourney
-                isOpen={isCaptureOpen}
-                onClose={() => setIsCaptureOpen(false)}
-                tier={selectedTier}
-            />
+            {hasCaptureOpened && (
+                <GetEdgeJourney
+                    isOpen={isCaptureOpen}
+                    onClose={() => setIsCaptureOpen(false)}
+                    tier={selectedTier}
+                />
+            )}
 
-            <CryptoPayment
-                isOpen={isCryptoOpen}
-                onClose={() => setIsCryptoOpen(false)}
-                tier={selectedTier}
-                price={selectedPrice}
-            />
+            {hasCryptoOpened && (
+                <CryptoPayment
+                    isOpen={isCryptoOpen}
+                    onClose={() => setIsCryptoOpen(false)}
+                    tier={selectedTier}
+                    price={selectedPrice}
+                />
+            )}
         </main>
     );
 }
