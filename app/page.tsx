@@ -7,18 +7,22 @@ import { motion } from "framer-motion";
 import { Database, Cpu, ArrowRight, Zap, Shield, Activity } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
 
-import GetEdgeJourney from "@/components/GetEdgeJourney";
+const GetEdgeJourney = dynamic(() => import("@/components/GetEdgeJourney"), { ssr: false });
+
 import WealthErosion from "@/components/WealthErosion";
 import { useState } from "react";
 
 export default function Home() {
   const [isCaptureOpen, setIsCaptureOpen] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
   const [selectedTier, setSelectedTier] = useState("Alpha");
 
   const triggerCapture = (tier = "Alpha") => {
     setSelectedTier(tier);
     setIsCaptureOpen(true);
+    setHasOpened(true);
   };
 
   return (
@@ -201,6 +205,10 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <Button
                 onClick={() => triggerCapture("Alpha Access")}
+                onMouseEnter={() => {
+                   // Prefetch the component code
+                   import("@/components/GetEdgeJourney");
+                }}
                 size="lg"
                 className="w-full sm:w-auto h-16 px-12 rounded-2xl bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] text-sm hover:scale-105 transition-transform shadow-lg"
               >
@@ -216,11 +224,13 @@ export default function Home() {
         </div>
       </section>
 
-      <GetEdgeJourney
-        isOpen={isCaptureOpen}
-        onClose={() => setIsCaptureOpen(false)}
-        tier={selectedTier}
-      />
+      {hasOpened && (
+        <GetEdgeJourney
+          isOpen={isCaptureOpen}
+          onClose={() => setIsCaptureOpen(false)}
+          tier={selectedTier}
+        />
+      )}
 
 
       {/* Footer */}
