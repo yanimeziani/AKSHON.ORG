@@ -1,0 +1,3 @@
+## 2026-01-14 - Lazy Loading Modals
+**Learning:** For heavy modals that are conditionally rendered but statically imported, using `next/dynamic` with a separate state to control the *initial* rendering can significantly reduce initial bundle size. Even if the modal logic uses `AnimatePresence`, wrapping it in a condition controlled by a `hasOpened` state works well to defer loading until interaction, while maintaining exit animations (as long as the wrapper condition doesn't toggle off).
+**Action:** Identify other heavy interactive components (like complex forms or visualizations) that are initially hidden and apply this pattern.
