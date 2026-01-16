@@ -22,8 +22,12 @@ import { useState, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import Link from "next/link";
-import CryptoPayment from "@/components/CryptoPayment";
+import dynamic from "next/dynamic";
 import { auth } from "@/lib/firebase";
+
+const CryptoPayment = dynamic(() => import("@/components/CryptoPayment"), {
+    ssr: false,
+});
 import { onAuthStateChanged, User } from "firebase/auth";
 import { useSearchParams } from "next/navigation";
 
@@ -31,6 +35,7 @@ function DashboardContent() {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+    const [hasOpenedPayment, setHasOpenedPayment] = useState(false);
     const [selectedTier, setSelectedTier] = useState({ name: "Pro", price: "$49" });
     const searchParams = useSearchParams();
     const isSuccess = searchParams.get('success');
@@ -118,6 +123,7 @@ function DashboardContent() {
 
     const openPayment = (tier: string, price: string) => {
         setSelectedTier({ name: tier, price });
+        if (!hasOpenedPayment) setHasOpenedPayment(true);
         setIsPaymentOpen(true);
     };
 
@@ -438,12 +444,14 @@ function DashboardContent() {
                 </motion.div>
             </div>
 
-            <CryptoPayment
-                isOpen={isPaymentOpen}
-                onClose={() => setIsPaymentOpen(false)}
-                tier={selectedTier.name}
-                price={selectedTier.price}
-            />
+            {hasOpenedPayment && (
+                <CryptoPayment
+                    isOpen={isPaymentOpen}
+                    onClose={() => setIsPaymentOpen(false)}
+                    tier={selectedTier.name}
+                    price={selectedTier.price}
+                />
+            )}
         </main>
     );
 }
