@@ -4,8 +4,10 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import GetEdgeJourney from "./GetEdgeJourney";
 import { auth } from "@/lib/firebase";
+import dynamic from "next/dynamic";
+
+const GetEdgeJourney = dynamic(() => import("./GetEdgeJourney"), { ssr: false });
 import { onAuthStateChanged, User } from "firebase/auth";
 import TelemetryToggle from "./TelemetryToggle";
 

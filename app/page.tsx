@@ -8,9 +8,11 @@ import { Database, Cpu, ArrowRight, Zap, Shield, Activity } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-import GetEdgeJourney from "@/components/GetEdgeJourney";
 import WealthErosion from "@/components/WealthErosion";
 import { useState } from "react";
+import dynamic from "next/dynamic";
+
+const GetEdgeJourney = dynamic(() => import("@/components/GetEdgeJourney"), { ssr: false });
 
 export default function Home() {
   const [isCaptureOpen, setIsCaptureOpen] = useState(false);
