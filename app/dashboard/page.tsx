@@ -22,10 +22,12 @@ import { useState, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import Link from "next/link";
-import CryptoPayment from "@/components/CryptoPayment";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const CryptoPayment = dynamic(() => import("@/components/CryptoPayment"), { ssr: false });
 
 function DashboardContent() {
     const [user, setUser] = useState<User | null>(null);
@@ -206,6 +208,7 @@ function DashboardContent() {
                                 </div>
                                 <Button
                                     onClick={() => openPayment("Pro Fleet Access", "0.5 ETH")}
+                                    onMouseEnter={() => import("@/components/CryptoPayment")}
                                     className="w-full h-14 bg-primary hover:bg-primary/90 text-black font-black uppercase tracking-widest rounded-xl transition-all shadow-[0_0_30px_rgba(212,175,55,0.1)] hover:shadow-[0_0_50px_rgba(212,175,55,0.2)]"
                                 >
                                     Refill with Crypto

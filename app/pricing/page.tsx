@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Check, Zap, Shield, Crown, HelpCircle, Wallet, CreditCard, Loader2 } from "lucide-react";
 import { useState, useEffect, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import GetEdgeJourney from "@/components/GetEdgeJourney";
-import CryptoPayment from "@/components/CryptoPayment";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const GetEdgeJourney = dynamic(() => import("@/components/GetEdgeJourney"), { ssr: false });
+const CryptoPayment = dynamic(() => import("@/components/CryptoPayment"), { ssr: false });
 
 function PricingContent() {
     const [billingCycle, setBillingCycle] = useState<"monthly" | "annually">("annually");
@@ -267,6 +269,7 @@ function PricingContent() {
                             <div className="flex flex-col gap-3 mt-auto">
                                 <Button
                                     onClick={() => handleAcquire(tier.name)}
+                                    onMouseEnter={() => import("@/components/GetEdgeJourney")}
                                     disabled={isCheckingOut === tier.name}
                                     className={`w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs transition-all ${tier.popular
                                         ? "bg-white text-black hover:bg-white/90"
@@ -285,6 +288,7 @@ function PricingContent() {
                                 {tier.price !== "Custom" && (
                                     <Button
                                         onClick={() => handleCrypto(tier.name, tier.price)}
+                                        onMouseEnter={() => import("@/components/CryptoPayment")}
                                         className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-[10px] bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all flex items-center justify-center gap-2"
                                     >
                                         <Wallet className="w-4 h-4" />
