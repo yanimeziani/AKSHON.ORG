@@ -8,17 +8,26 @@ import { Database, Cpu, ArrowRight, Zap, Shield, Activity } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-import GetEdgeJourney from "@/components/GetEdgeJourney";
 import WealthErosion from "@/components/WealthErosion";
 import { useState } from "react";
+import dynamic from "next/dynamic";
+
+const GetEdgeJourney = dynamic(() => import("@/components/GetEdgeJourney"), { ssr: false });
 
 export default function Home() {
   const [isCaptureOpen, setIsCaptureOpen] = useState(false);
+  const [isJourneyMounted, setIsJourneyMounted] = useState(false);
   const [selectedTier, setSelectedTier] = useState("Alpha");
 
   const triggerCapture = (tier = "Alpha") => {
+    setIsJourneyMounted(true);
     setSelectedTier(tier);
     setIsCaptureOpen(true);
+  };
+
+  const prefetchJourney = () => {
+    // Manually prefetch the dynamic component chunk
+    import("@/components/GetEdgeJourney");
   };
 
   return (
@@ -201,6 +210,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <Button
                 onClick={() => triggerCapture("Alpha Access")}
+                onMouseEnter={prefetchJourney}
                 size="lg"
                 className="w-full sm:w-auto h-16 px-12 rounded-2xl bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] text-sm hover:scale-105 transition-transform shadow-lg"
               >
@@ -216,11 +226,13 @@ export default function Home() {
         </div>
       </section>
 
-      <GetEdgeJourney
-        isOpen={isCaptureOpen}
-        onClose={() => setIsCaptureOpen(false)}
-        tier={selectedTier}
-      />
+      {isJourneyMounted && (
+        <GetEdgeJourney
+          isOpen={isCaptureOpen}
+          onClose={() => setIsCaptureOpen(false)}
+          tier={selectedTier}
+        />
+      )}
 
 
       {/* Footer */}
