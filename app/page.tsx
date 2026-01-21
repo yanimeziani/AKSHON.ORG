@@ -8,15 +8,19 @@ import { Database, Cpu, ArrowRight, Zap, Shield, Activity } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-import GetEdgeJourney from "@/components/GetEdgeJourney";
+import dynamic from "next/dynamic";
 import WealthErosion from "@/components/WealthErosion";
 import { useState } from "react";
 
+const GetEdgeJourney = dynamic(() => import("@/components/GetEdgeJourney"), { ssr: false });
+
 export default function Home() {
   const [isCaptureOpen, setIsCaptureOpen] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const [selectedTier, setSelectedTier] = useState("Alpha");
 
   const triggerCapture = (tier = "Alpha") => {
+    setHasInteracted(true);
     setSelectedTier(tier);
     setIsCaptureOpen(true);
   };
@@ -216,11 +220,13 @@ export default function Home() {
         </div>
       </section>
 
-      <GetEdgeJourney
-        isOpen={isCaptureOpen}
-        onClose={() => setIsCaptureOpen(false)}
-        tier={selectedTier}
-      />
+      {hasInteracted && (
+        <GetEdgeJourney
+          isOpen={isCaptureOpen}
+          onClose={() => setIsCaptureOpen(false)}
+          tier={selectedTier}
+        />
+      )}
 
 
       {/* Footer */}
