@@ -2,19 +2,23 @@
 
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-import { Check, Zap, Shield, Crown, HelpCircle, Wallet, CreditCard, Loader2 } from "lucide-react";
+import { Check, Zap, Shield, Crown, HelpCircle, Wallet, Loader2 } from "lucide-react";
 import { useState, useEffect, Suspense } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import GetEdgeJourney from "@/components/GetEdgeJourney";
-import CryptoPayment from "@/components/CryptoPayment";
+import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import { auth } from "@/lib/firebase";
+
+const GetEdgeJourney = dynamic(() => import("@/components/GetEdgeJourney"), { ssr: false });
+const CryptoPayment = dynamic(() => import("@/components/CryptoPayment"), { ssr: false });
 import { onAuthStateChanged, User } from "firebase/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 
 function PricingContent() {
     const [billingCycle, setBillingCycle] = useState<"monthly" | "annually">("annually");
     const [isCaptureOpen, setIsCaptureOpen] = useState(false);
+    const [hasInteractedCapture, setHasInteractedCapture] = useState(false);
     const [isCryptoOpen, setIsCryptoOpen] = useState(false);
+    const [hasInteractedCrypto, setHasInteractedCrypto] = useState(false);
     const [selectedTier, setSelectedTier] = useState("Standard");
     const [selectedPrice, setSelectedPrice] = useState("");
     const [user, setUser] = useState<User | null>(null);
@@ -45,6 +49,7 @@ function PricingContent() {
         // If not logged in, show lead capture
         if (!user) {
             setSelectedTier(tier);
+            setHasInteractedCapture(true);
             setIsCaptureOpen(true);
             return;
         }
@@ -52,6 +57,7 @@ function PricingContent() {
         // For Sovereign tier, always show contact form
         if (tier === "Sovereign") {
             setSelectedTier(tier);
+            setHasInteractedCapture(true);
             setIsCaptureOpen(true);
             return;
         }
@@ -90,6 +96,7 @@ function PricingContent() {
     const handleCrypto = (tier: string, price: string) => {
         setSelectedTier(tier);
         setSelectedPrice(price);
+        setHasInteractedCrypto(true);
         setIsCryptoOpen(true);
     };
 
@@ -194,7 +201,7 @@ function PricingContent() {
                         transition={{ delay: 0.1 }}
                         className="text-muted-foreground font-light max-w-2xl mx-auto italic text-lg"
                     >
-                        "Information is the only true arbitrage." — The Sovereign Philosophy.
+                        &quot;Information is the only true arbitrage.&quot; — The Sovereign Philosophy.
                         Secure your access to frontier research before the market adjusts.
                     </motion.p>
 
@@ -324,18 +331,22 @@ function PricingContent() {
                 </section>
             </div>
 
-            <GetEdgeJourney
-                isOpen={isCaptureOpen}
-                onClose={() => setIsCaptureOpen(false)}
-                tier={selectedTier}
-            />
+            {hasInteractedCapture && (
+                <GetEdgeJourney
+                    isOpen={isCaptureOpen}
+                    onClose={() => setIsCaptureOpen(false)}
+                    tier={selectedTier}
+                />
+            )}
 
-            <CryptoPayment
-                isOpen={isCryptoOpen}
-                onClose={() => setIsCryptoOpen(false)}
-                tier={selectedTier}
-                price={selectedPrice}
-            />
+            {hasInteractedCrypto && (
+                <CryptoPayment
+                    isOpen={isCryptoOpen}
+                    onClose={() => setIsCryptoOpen(false)}
+                    tier={selectedTier}
+                    price={selectedPrice}
+                />
+            )}
         </main>
     );
 }
