@@ -4,13 +4,16 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import GetEdgeJourney from "./GetEdgeJourney";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
+import dynamic from "next/dynamic";
+
+const GetEdgeJourney = dynamic(() => import("./GetEdgeJourney"), { ssr: false });
 import TelemetryToggle from "./TelemetryToggle";
 
 export default function Navbar() {
     const [isCaptureOpen, setIsCaptureOpen] = useState(false);
+    const [hasInteracted, setHasInteracted] = useState(false);
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
@@ -97,7 +100,10 @@ export default function Navbar() {
                         </Link>
                     )}
                     <Button
-                        onClick={() => setIsCaptureOpen(true)}
+                        onClick={() => {
+                            setHasInteracted(true);
+                            setIsCaptureOpen(true);
+                        }}
                         size="sm"
                         className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-widest text-xs px-6 shadow-md"
                     >
@@ -105,7 +111,9 @@ export default function Navbar() {
                     </Button>
                 </div>
             </div>
-            <GetEdgeJourney isOpen={isCaptureOpen} onClose={() => setIsCaptureOpen(false)} tier="Alpha Access" />
+            {hasInteracted && (
+                <GetEdgeJourney isOpen={isCaptureOpen} onClose={() => setIsCaptureOpen(false)} tier="Alpha Access" />
+            )}
         </motion.nav>
 
     );
