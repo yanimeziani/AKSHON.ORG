@@ -4,13 +4,18 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import GetEdgeJourney from "./GetEdgeJourney";
+import dynamic from "next/dynamic";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import TelemetryToggle from "./TelemetryToggle";
 
+// Lazy load the heavy journey component to reduce initial bundle size
+// using ssr: false since it's a client-side modal
+const GetEdgeJourney = dynamic(() => import("./GetEdgeJourney"), { ssr: false });
+
 export default function Navbar() {
     const [isCaptureOpen, setIsCaptureOpen] = useState(false);
+    const [hasInteracted, setHasInteracted] = useState(false);
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
@@ -97,7 +102,10 @@ export default function Navbar() {
                         </Link>
                     )}
                     <Button
-                        onClick={() => setIsCaptureOpen(true)}
+                        onClick={() => {
+                            setIsCaptureOpen(true);
+                            setHasInteracted(true);
+                        }}
                         size="sm"
                         className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-widest text-xs px-6 shadow-md"
                     >
@@ -105,7 +113,7 @@ export default function Navbar() {
                     </Button>
                 </div>
             </div>
-            <GetEdgeJourney isOpen={isCaptureOpen} onClose={() => setIsCaptureOpen(false)} tier="Alpha Access" />
+            {hasInteracted && <GetEdgeJourney isOpen={isCaptureOpen} onClose={() => setIsCaptureOpen(false)} tier="Alpha Access" />}
         </motion.nav>
 
     );
