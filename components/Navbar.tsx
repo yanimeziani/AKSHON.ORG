@@ -4,13 +4,16 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import GetEdgeJourney from "./GetEdgeJourney";
+import dynamic from "next/dynamic";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import TelemetryToggle from "./TelemetryToggle";
 
+const GetEdgeJourney = dynamic(() => import("./GetEdgeJourney"), { ssr: false });
+
 export default function Navbar() {
     const [isCaptureOpen, setIsCaptureOpen] = useState(false);
+    const [hasOpenedJourney, setHasOpenedJourney] = useState(false);
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
@@ -19,6 +22,12 @@ export default function Navbar() {
         });
         return () => unsubscribe();
     }, []);
+
+    useEffect(() => {
+        if (isCaptureOpen && !hasOpenedJourney) {
+            setHasOpenedJourney(true);
+        }
+    }, [isCaptureOpen, hasOpenedJourney]);
 
     const handleSignOut = async () => {
         try {
@@ -105,7 +114,7 @@ export default function Navbar() {
                     </Button>
                 </div>
             </div>
-            <GetEdgeJourney isOpen={isCaptureOpen} onClose={() => setIsCaptureOpen(false)} tier="Alpha Access" />
+            {hasOpenedJourney && <GetEdgeJourney isOpen={isCaptureOpen} onClose={() => setIsCaptureOpen(false)} tier="Alpha Access" />}
         </motion.nav>
 
     );
