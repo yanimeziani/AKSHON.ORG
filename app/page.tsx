@@ -2,15 +2,16 @@
 
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import LiquidMetalDemo from "@/components/LiquidMetalDemo";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { Database, Cpu, ArrowRight, Zap, Shield, Activity } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
-import GetEdgeJourney from "@/components/GetEdgeJourney";
-import WealthErosion from "@/components/WealthErosion";
 import { useState } from "react";
+
+const LiquidMetalDemo = dynamic(() => import("@/components/LiquidMetalDemo"));
+const GetEdgeJourney = dynamic(() => import("@/components/GetEdgeJourney"), { ssr: false });
+const WealthErosion = dynamic(() => import("@/components/WealthErosion"));
 
 export default function Home() {
   const [isCaptureOpen, setIsCaptureOpen] = useState(false);

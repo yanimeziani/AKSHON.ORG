@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import GetEdgeJourney from "./GetEdgeJourney";
+import dynamic from "next/dynamic";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import TelemetryToggle from "./TelemetryToggle";
+
+const GetEdgeJourney = dynamic(() => import("./GetEdgeJourney"), { ssr: false });
 
 export default function Navbar() {
     const [isCaptureOpen, setIsCaptureOpen] = useState(false);
