@@ -130,13 +130,13 @@ export default function GetEdgeJourney({ isOpen, onClose, tier = "Standard" }: G
                     >
                         <button
                             onClick={handleClose}
-                            className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg focus-visible:ring-2 focus-visible:ring-primary"
+                            className="absolute top-6 right-6 z-50 text-white/70 hover:text-white transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg focus-visible:ring-2 focus-visible:ring-primary"
                             aria-label="Close modal"
                         >
                             <X className="w-5 h-5" />
                         </button>
 
-                        <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 blur-[80px] rounded-full" />
+                        <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 blur-[80px] rounded-full pointer-events-none" />
 
                         <div className="relative z-10">
                             <AnimatePresence mode="wait">
