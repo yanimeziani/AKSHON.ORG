@@ -2,22 +2,35 @@
 
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import LiquidMetalDemo from "@/components/LiquidMetalDemo";
 import { motion } from "framer-motion";
 import { Database, Cpu, ArrowRight, Zap, Shield, Activity } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
-import GetEdgeJourney from "@/components/GetEdgeJourney";
-import WealthErosion from "@/components/WealthErosion";
 import { useState } from "react";
+import dynamic from "next/dynamic";
+
+const LiquidMetalDemo = dynamic(() => import("@/components/LiquidMetalDemo"), {
+  ssr: false,
+  loading: () => <div className="w-full max-w-4xl aspect-[16/9] bg-card/50 rounded-[3rem] animate-pulse mx-auto" />
+});
+
+const WealthErosion = dynamic(() => import("@/components/WealthErosion"), {
+  ssr: false,
+  loading: () => <div className="w-full max-w-4xl h-96 bg-card/50 rounded-[40px] animate-pulse mx-auto" />
+});
+
+const GetEdgeJourney = dynamic(() => import("@/components/GetEdgeJourney"), {
+  ssr: false
+});
 
 export default function Home() {
   const [isCaptureOpen, setIsCaptureOpen] = useState(false);
   const [selectedTier, setSelectedTier] = useState("Alpha");
+  const [hasOpened, setHasOpened] = useState(false);
 
   const triggerCapture = (tier = "Alpha") => {
     setSelectedTier(tier);
+    setHasOpened(true);
     setIsCaptureOpen(true);
   };
 
@@ -216,11 +229,13 @@ export default function Home() {
         </div>
       </section>
 
-      <GetEdgeJourney
-        isOpen={isCaptureOpen}
-        onClose={() => setIsCaptureOpen(false)}
-        tier={selectedTier}
-      />
+      {hasOpened && (
+        <GetEdgeJourney
+          isOpen={isCaptureOpen}
+          onClose={() => setIsCaptureOpen(false)}
+          tier={selectedTier}
+        />
+      )}
 
 
       {/* Footer */}

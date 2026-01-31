@@ -1,0 +1,3 @@
+## 2025-05-22 - Static Imports of Heavy Components
+**Learning:** Static imports of heavy UI components (like `LiquidMetalDemo`) and components that initialize external SDKs (like `GetEdgeJourney` -> Firebase) drastically increase the initial bundle size. Even if a component is hidden (e.g., a modal), its code and dependencies are executed if imported statically.
+**Action:** Always use `next/dynamic` for heavy visual components below the fold and for modals. For modals that trigger expensive initializations, use a state guard (e.g., `hasOpened`) to ensure the component is not even rendered (and thus its chunk not loaded) until the first interaction.
