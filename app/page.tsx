@@ -2,21 +2,30 @@
 
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import LiquidMetalDemo from "@/components/LiquidMetalDemo";
 import { motion } from "framer-motion";
 import { Database, Cpu, ArrowRight, Zap, Shield, Activity } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
-import GetEdgeJourney from "@/components/GetEdgeJourney";
-import WealthErosion from "@/components/WealthErosion";
 import { useState } from "react";
+import dynamic from "next/dynamic";
+
+// Bolt Optimization: Lazy load heavy visualization components to reduce initial bundle size.
+// ssr: false is used as these components are below the fold and heavily interactive/visual.
+const LiquidMetalDemo = dynamic(() => import("@/components/LiquidMetalDemo"), { ssr: false });
+const WealthErosion = dynamic(() => import("@/components/WealthErosion"), { ssr: false });
+
+// Bolt Optimization: Defer loading of the modal component (and its heavy Firebase dependencies)
+// until the user actually interacts with it.
+const GetEdgeJourney = dynamic(() => import("@/components/GetEdgeJourney"), { ssr: false });
 
 export default function Home() {
   const [isCaptureOpen, setIsCaptureOpen] = useState(false);
+  // Bolt Optimization: hasOpened acts as a gate to ensure the GetEdgeJourney chunk is not loaded until needed.
+  const [hasOpened, setHasOpened] = useState(false);
   const [selectedTier, setSelectedTier] = useState("Alpha");
 
   const triggerCapture = (tier = "Alpha") => {
+    setHasOpened(true);
     setSelectedTier(tier);
     setIsCaptureOpen(true);
   };
@@ -216,11 +225,13 @@ export default function Home() {
         </div>
       </section>
 
-      <GetEdgeJourney
-        isOpen={isCaptureOpen}
-        onClose={() => setIsCaptureOpen(false)}
-        tier={selectedTier}
-      />
+      {hasOpened && (
+        <GetEdgeJourney
+          isOpen={isCaptureOpen}
+          onClose={() => setIsCaptureOpen(false)}
+          tier={selectedTier}
+        />
+      )}
 
 
       {/* Footer */}
