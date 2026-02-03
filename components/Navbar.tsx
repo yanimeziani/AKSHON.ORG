@@ -4,25 +4,47 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import GetEdgeJourney from "./GetEdgeJourney";
-import { auth } from "@/lib/firebase";
-import { onAuthStateChanged, User } from "firebase/auth";
+import dynamic from "next/dynamic";
+import type { User } from "firebase/auth";
 import TelemetryToggle from "./TelemetryToggle";
+
+// ⚡ Bolt: Lazy load GetEdgeJourney to defer Firebase initialization
+const GetEdgeJourney = dynamic(() => import("./GetEdgeJourney"), { ssr: false });
 
 export default function Navbar() {
     const [isCaptureOpen, setIsCaptureOpen] = useState(false);
+    const [hasOpened, setHasOpened] = useState(false);
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
-        });
-        return () => unsubscribe();
+        let unsubscribe: (() => void) | undefined;
+        let isMounted = true;
+
+        const initAuth = async () => {
+            // ⚡ Bolt: Lazy load firebase to avoid TBT impact on initial load
+            const { auth } = await import("@/lib/firebase");
+            const { onAuthStateChanged } = await import("firebase/auth");
+
+            if (!isMounted) return;
+
+            unsubscribe = onAuthStateChanged(auth, (user) => {
+                if (isMounted) setUser(user);
+            });
+        };
+
+        initAuth();
+
+        return () => {
+            isMounted = false;
+            if (unsubscribe) unsubscribe();
+        };
     }, []);
 
     const handleSignOut = async () => {
         try {
-            await auth.signOut();
+            const { auth } = await import("@/lib/firebase");
+            const { signOut } = await import("firebase/auth");
+            await signOut(auth);
             setUser(null);
         } catch (err) {
             console.error("Error signing out:", err);
@@ -97,7 +119,10 @@ export default function Navbar() {
                         </Link>
                     )}
                     <Button
-                        onClick={() => setIsCaptureOpen(true)}
+                        onClick={() => {
+                            setHasOpened(true);
+                            setIsCaptureOpen(true);
+                        }}
                         size="sm"
                         className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-widest text-xs px-6 shadow-md"
                     >
@@ -105,7 +130,9 @@ export default function Navbar() {
                     </Button>
                 </div>
             </div>
-            <GetEdgeJourney isOpen={isCaptureOpen} onClose={() => setIsCaptureOpen(false)} tier="Alpha Access" />
+            {hasOpened && (
+                <GetEdgeJourney isOpen={isCaptureOpen} onClose={() => setIsCaptureOpen(false)} tier="Alpha Access" />
+            )}
         </motion.nav>
 
     );
